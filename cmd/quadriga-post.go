@@ -1,0 +1,22 @@
+package cmd
+
+import (
+	"github.com/spf13/cobra"
+	"gitlab.com/crankykernel/ctrader/cmd/common"
+	"gitlab.com/crankykernel/ctrader/quadriga"
+	"github.com/spf13/viper"
+)
+
+var quadrigaPostCmd = &cobra.Command{
+	Use: "post",
+	Run: func(cmd *cobra.Command, args []string) {
+		common.Post(quadriga.NewClient(
+			viper.GetString("quadriga.api.client-id"),
+			viper.GetString("quadriga.api.key"),
+			viper.GetString("quadriga.api.secret")), args)
+	},
+}
+
+func init() {
+	quadrigaCmd.AddCommand(quadrigaPostCmd)
+}
