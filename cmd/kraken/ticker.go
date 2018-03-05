@@ -26,66 +26,45 @@ package kraken
 
 import (
 	"log"
-	"strings"
-	"io/ioutil"
-	"fmt"
 	"gitlab.com/crankykernel/ctrader/kraken"
-	"net/http"
 	"github.com/spf13/viper"
+	"fmt"
+	"encoding/json"
+	"time"
 )
 
-func KrakenGetCmd(args []string) {
-	get("GET", args)
+const INTERVAL = 3
+
+var TickerFlags struct {
+	Once     bool
+	Interval int64
 }
 
-func KrakenPostCmd(args []string) {
-	get("POST", args)
-}
-
-func get(method string, args []string) {
-	if method == "" {
-		method = "GET"
-	}
+func Ticker(args []string) {
 
 	if len(args) == 0 {
-		log.Fatal("error: an endpoint is required.")
+		log.Fatal("error: no pairs provided")
 	}
 
-	endpoint := args[0]
-
-	var params map[string]interface{}
-
-	if len(args) > 1 {
-		params = map[string]interface{}{}
-		for _, arg := range args[1:] {
-			parts := strings.SplitN(arg, "=", 2)
-			params[parts[0]] = parts[1]
-		}
-	}
-
-	client := kraken.NewClient(
-		viper.GetString("kraken.api.key"),
+	client := kraken.NewClient(viper.GetString("kraken.api.key"),
 		viper.GetString("kraken.api.secret"))
 
-	var response *http.Response
-	var err error
+	for {
+		ticker, err := client.Ticker(args...)
+		if err != nil {
+			log.Fatal("error: ", err)
+		}
+		renderTicker(ticker)
 
-	if method == "GET" {
-		response, err = client.Get(endpoint, params)
-	} else if method == "POST" {
-		response, err = client.Post(endpoint, params)
-	} else {
-		log.Fatal("error: unknown method")
-	}
+		if TickerFlags.Once {
+			break
+		}
 
-	if err != nil {
-		log.Fatal("error: ", err)
+		time.Sleep(time.Duration(TickerFlags.Interval) * time.Second)
 	}
-
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal("error: ", err)
-	}
-	fmt.Println(string(body))
 }
 
+func renderTicker(ticker map[string]kraken.Ticker) {
+	txt, _ := json.Marshal(ticker)
+	fmt.Printf("%s\n", txt)
+}

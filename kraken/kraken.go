@@ -35,6 +35,8 @@ import (
 	"crypto/hmac"
 	"crypto/sha512"
 	"strings"
+	"encoding/json"
+	"strconv"
 )
 
 const API_ROOT = "https://api.kraken.com"
@@ -44,11 +46,7 @@ type Client struct {
 	apiSecret []byte
 }
 
-func NewClient() *Client {
-	return &Client{}
-}
-
-func NewClientWithAuth(apiKey string, apiSecret string) *Client {
+func NewClient(apiKey string, apiSecret string) *Client {
 	var decodedApiSecret []byte
 	var err error
 	if apiSecret != "" {
@@ -64,6 +62,14 @@ func NewClientWithAuth(apiKey string, apiSecret string) *Client {
 		apiKey:    apiKey,
 		apiSecret: decodedApiSecret,
 	}
+}
+
+// HasAuth returns true if client has authentication information.
+func (c *Client) HasAuth() bool {
+	if c.apiKey != "" && c.apiSecret != nil {
+		return true
+	}
+	return false
 }
 
 func (c *Client) Get(endpoint string, params map[string]interface{}) (*http.Response, error) {
@@ -153,4 +159,76 @@ func (c *Client) BuildQueryString(params map[string]interface{}) string {
 
 func (c *Client) getNonce() int64 {
 	return time.Now().UnixNano() / int64(time.Millisecond)
+}
+
+type Ticker struct {
+	Pair      string
+	Timestamp time.Time
+	Ask       float64
+	Bid       float64
+	Last      float64
+}
+
+type RawTickerPair struct {
+	A []string `json:"a"` // Ask array.
+	B []string `json:"b"` // Bid array.
+	C []string `json:"c"` // Last array.
+	V []string `json:"v"`
+	P []string `json:"p"`
+	T []int64  `json:"t"`
+	H []string `json:"h"`
+	O string   `json:"o"`
+}
+
+type RawTickerResponse struct {
+	Error  []string                 `json:"error"`
+	Result map[string]RawTickerPair `json:"result"`
+}
+
+func (c *Client) Ticker(pairs ... string) (tickers map[string]Ticker, err error) {
+	endpoint := "/0/public/Ticker"
+
+	if len(pairs) == 0 {
+		return nil, fmt.Errorf("no pairs")
+	}
+
+	params := map[string]interface{}{
+		"pair": strings.Join(pairs, ","),
+	}
+
+	var r *http.Response
+
+	if (c.HasAuth()) {
+		r, err = c.Post(endpoint, params)
+	} else {
+		r, err = c.Get(endpoint, params)
+	}
+
+	now := time.Now()
+
+	decoder := json.NewDecoder(r.Body)
+	decoder.UseNumber()
+	rawResponse := RawTickerResponse{}
+	if err = decoder.Decode(&rawResponse); err != nil {
+		return nil, err
+	}
+
+	if len(rawResponse.Error) > 0 {
+		return nil, fmt.Errorf("%s", rawResponse.Error[0])
+	}
+
+	tickers = map[string]Ticker{}
+
+	for pair, val := range rawResponse.Result {
+		normalizedPair := GetNormalizePairName(pair)
+		ticker := Ticker{}
+		ticker.Timestamp = now
+		ticker.Pair = normalizedPair
+		ticker.Ask, _ = strconv.ParseFloat(val.A[0], 64)
+		ticker.Bid, _ = strconv.ParseFloat(val.B[0], 64)
+		ticker.Last, _ = strconv.ParseFloat(val.C[0], 64)
+		tickers[normalizedPair] = ticker
+	}
+
+	return tickers, nil
 }

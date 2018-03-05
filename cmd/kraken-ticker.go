@@ -22,70 +22,26 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package kraken
+package cmd
 
 import (
-	"log"
-	"strings"
-	"io/ioutil"
-	"fmt"
-	"gitlab.com/crankykernel/ctrader/kraken"
-	"net/http"
-	"github.com/spf13/viper"
+	"github.com/spf13/cobra"
+	"gitlab.com/crankykernel/ctrader/cmd/kraken"
 )
 
-func KrakenGetCmd(args []string) {
-	get("GET", args)
+var krakenTickerCmd = &cobra.Command{
+	Use: "ticker",
+	Run: func(cmd *cobra.Command, args []string) {
+		kraken.Ticker(args)
+	},
 }
 
-func KrakenPostCmd(args []string) {
-	get("POST", args)
+func init() {
+	krakenCmd.AddCommand(krakenTickerCmd)
+
+	flags := krakenTickerCmd.Flags()
+	flags.BoolVarP(&kraken.TickerFlags.Once, "once", "1", false,
+		"Get one tick then exit")
+	flags.Int64VarP(&kraken.TickerFlags.Interval, "interval", "i",
+		kraken.INTERVAL, "Number of seconds between polls")
 }
-
-func get(method string, args []string) {
-	if method == "" {
-		method = "GET"
-	}
-
-	if len(args) == 0 {
-		log.Fatal("error: an endpoint is required.")
-	}
-
-	endpoint := args[0]
-
-	var params map[string]interface{}
-
-	if len(args) > 1 {
-		params = map[string]interface{}{}
-		for _, arg := range args[1:] {
-			parts := strings.SplitN(arg, "=", 2)
-			params[parts[0]] = parts[1]
-		}
-	}
-
-	client := kraken.NewClient(
-		viper.GetString("kraken.api.key"),
-		viper.GetString("kraken.api.secret"))
-
-	var response *http.Response
-	var err error
-
-	if method == "GET" {
-		response, err = client.Get(endpoint, params)
-	} else if method == "POST" {
-		response, err = client.Post(endpoint, params)
-	} else {
-		log.Fatal("error: unknown method")
-	}
-
-	if err != nil {
-		log.Fatal("error: ", err)
-	}
-
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal("error: ", err)
-	}
-	fmt.Println(string(body))
-}
-

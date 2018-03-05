@@ -37,29 +37,6 @@ import (
 	"strings"
 )
 
-var normalizedPairs map[string]string
-
-func init() {
-	normalizedPairs = map[string]string{
-		"XXBTZUSD": "BTC/USD",
-		"XETHZUSD": "ETH/USD",
-		"XLTCZUSD": "LTC/USD",
-		"XXMRZUSD": "XMR/USD",
-		"XETCZUSD": "ETC/USD",
-	}
-}
-
-func normalizePair(pair string) string {
-	normalized, ok := normalizedPairs[pair]
-	if ok {
-		return normalized
-	}
-	if strings.HasSuffix(pair, "USD") {
-		pair = strings.Replace(pair, "USD", "/USD", -1)
-	}
-	return pair
-}
-
 func parseTimestamp(value json.Number) (time.Time, error) {
 	v64, err := value.Float64()
 	if err != nil {
@@ -82,7 +59,7 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 
 	format, _ := opts.GetString("format")
 
-	client := kraken.NewClientWithAuth(viper.GetString("kraken.api.key"),
+	client := kraken.NewClient(viper.GetString("kraken.api.key"),
 		viper.GetString("kraken.api.secret"))
 
 	params := map[string]interface{}{}
@@ -132,7 +109,7 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 
 		xtrade := Trade{
 			Timestamp: timestamp,
-			Pair:      normalizePair(trade["pair"].(string)),
+			Pair:      kraken.GetNormalizePairName(trade["pair"].(string)),
 			Type:      strings.Title(trade["type"].(string)),
 			Cost:      trade["cost"].(string),
 			Fee:       trade["fee"].(string),
