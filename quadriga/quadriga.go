@@ -34,6 +34,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"io/ioutil"
 )
 
 const API_ROOT = "https://api.quadrigacx.com"
@@ -128,4 +129,39 @@ func (c *Client) buildQueryString(params map[string]interface{}) string {
 
 func (c *Client) getNonce() int64 {
 	return time.Now().UnixNano() / int64(time.Millisecond)
+}
+
+// Return the available order books.
+func (c *Client) Books() ([]string, error) {
+	response, err := c.Get("/v2/ticker", map[string]interface{}{
+		"book": "all",
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != 200 {
+		return nil, fmt.Errorf("%s: %s", response.Status, string(body))
+	}
+
+	ticker := map[string]interface{}{}
+
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
+	if err := decoder.Decode(&ticker); err != nil {
+		return nil, err
+	}
+
+	books := []string{}
+
+	for key, _ := range ticker {
+		books = append(books, key)
+	}
+
+	return books, nil
 }
