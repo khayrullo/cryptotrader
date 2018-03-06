@@ -53,6 +53,8 @@ type Trade struct {
 	Cost      string
 	Fee       string
 	Volume    string
+
+	raw interface{}
 }
 
 func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
@@ -114,6 +116,7 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 			Cost:      trade["cost"].(string),
 			Fee:       trade["fee"].(string),
 			Volume:    trade["vol"].(string),
+			raw:       trade,
 		}
 
 		trades = append(trades, xtrade)
@@ -129,6 +132,8 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 	for i, trade := range trades {
 		switch format {
 		case "":
+			fallthrough
+		case "default":
 			fallthrough
 		case "json":
 			buf, err := json.Marshal(trade)
@@ -159,6 +164,11 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 				trade.Cost,
 				trade.Fee,
 				trade.Volume)
+		case "raw":
+			raw, _ := json.Marshal(trade.raw)
+			fmt.Printf("%s\n", raw)
+		default:
+			log.Fatal("error: unknown format: ", format)
 		}
 	}
 

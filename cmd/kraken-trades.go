@@ -31,6 +31,14 @@ import (
 
 var krakenTradesCmd = &cobra.Command{
 	Use: "trades",
+	Long: `Print trades.
+
+Available output formats:
+  - tab
+  - csv
+  - raw
+  - default
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		kraken.KrakenGetTrades(cmd.Flags(), args)
 	},
@@ -40,5 +48,5 @@ func init() {
 	krakenCmd.AddCommand(krakenTradesCmd)
 
 	krakenTradesCmd.Flags().Bool("reverse", false, "Display in reverse order.")
-	krakenTradesCmd.Flags().String("format", "", "Output format (ie: csv")
+	krakenTradesCmd.Flags().String("format", "", "Output format (ie: csv, tab, ...)")
 }
