@@ -29,9 +29,11 @@ import "strings"
 func init() {
 	pairSubsTable = [][]string{
 		{"XXBTZ", "BTC/"},
-		{"XETHZ", "ETC/"},
+		{"XETHZ", "ETH/"},
 		{"XLTCZ", "LTC/"},
 		{"XXMRZ", "XMR/"},
+		{"XETCZ", "ETC/"},
+		{"BCH", "BCH/"},
 	}
 }
 
