@@ -37,6 +37,8 @@ import (
 	"strings"
 	"encoding/json"
 	"strconv"
+	"io/ioutil"
+	"bytes"
 )
 
 const API_ROOT = "https://api.kraken.com"
@@ -232,3 +234,22 @@ func (c *Client) Ticker(pairs ... string) (tickers map[string]Ticker, err error)
 
 	return tickers, nil
 }
+
+type RawSetter interface {
+	SetRaw(raw string)
+}
+
+func decodeBody(r *http.Response, v RawSetter) error {
+	raw, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.UseNumber()
+	if err := decoder.Decode(v); err != nil {
+		return err
+	}
+	v.SetRaw(string(raw))
+	return nil
+}
+

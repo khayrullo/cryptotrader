@@ -26,6 +26,10 @@ package kraken
 
 import "strings"
 
+var pairSubsTable [][]string
+
+var assetSubsTable [][]string
+
 func init() {
 	pairSubsTable = [][]string{
 		{"XXBTZ", "BTC/"},
@@ -35,9 +39,16 @@ func init() {
 		{"XETCZ", "ETC/"},
 		{"BCH", "BCH/"},
 	}
-}
 
-var pairSubsTable [][]string
+	assetSubsTable = [][]string{
+		{"XXBT", "BTC"},
+		{"XLTC", "LTC"},
+		{"XXMR", "XMR"},
+		{"XETH", "ETH"},
+		{"XZEC", "ZEC"},
+		{"ZUSD", "USD"},
+	}
+}
 
 func GetNormalizePairName(pair string) string {
 	for _, sub := range pairSubsTable {
@@ -45,4 +56,12 @@ func GetNormalizePairName(pair string) string {
 	}
 
 	return pair
+}
+
+func NormalizeAssetName(name string) string {
+	for _, sub := range assetSubsTable {
+		name = strings.Replace(name, sub[0], sub[1], -1)
+	}
+
+	return name
 }

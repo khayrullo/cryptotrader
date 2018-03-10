@@ -29,22 +29,14 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"encoding/json"
-	"math"
 	"time"
 	"sort"
 	"github.com/spf13/pflag"
 	"fmt"
 	"strings"
+	"strconv"
+	"gitlab.com/crankykernel/ctrader/util"
 )
-
-func parseTimestamp(value json.Number) (time.Time, error) {
-	v64, err := value.Float64()
-	if err != nil {
-		return time.Time{}, err
-	}
-	sec, subsec := math.Modf(v64)
-	return time.Unix(int64(sec), int64(subsec*(1e9))), nil
-}
 
 type Trade struct {
 	Timestamp time.Time
@@ -52,6 +44,7 @@ type Trade struct {
 	Pair      string
 	Cost      string
 	Fee       string
+	Fee2      float64
 	Volume    string
 
 	raw interface{}
@@ -101,7 +94,7 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 	for key, trade := range rawTrades.(map[string]interface{}) {
 		trade := trade.(map[string]interface{})
 
-		timestamp, err := parseTimestamp(trade["time"].(json.Number))
+		timestamp, err := util.JsonNumberToTime(trade["time"].(json.Number))
 		if err != nil {
 			log.Fatal("error: failed to parse timestamp: %v", trade["time"])
 		}
@@ -109,12 +102,17 @@ func KrakenGetTrades(opts *pflag.FlagSet, args []string) {
 		trade["id"] = key
 		trade["timestamp"] = timestamp
 
+		ffee, _ := strconv.ParseFloat(trade["fee"].(string), 64)
+		sfee := fmt.Sprintf("%.4f", ffee)
+		ffee, _ = strconv.ParseFloat(sfee, 64)
+
 		xtrade := Trade{
 			Timestamp: timestamp,
 			Pair:      kraken.GetNormalizePairName(trade["pair"].(string)),
 			Type:      strings.Title(trade["type"].(string)),
 			Cost:      trade["cost"].(string),
 			Fee:       trade["fee"].(string),
+			Fee2:      ffee,
 			Volume:    trade["vol"].(string),
 			raw:       trade,
 		}
