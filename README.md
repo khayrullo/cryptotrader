@@ -2,6 +2,12 @@
 
 My tools for working with crypto current exchanges.
 
+## Latest Builds
+
+The latest builds from the git master branch can be found at:
+
+https://gitlab.com/crankykernel/ctrader/-/jobs/artifacts/master/browse?job=build
+
 ## Installation with Go Get
 
 ```
