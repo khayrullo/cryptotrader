@@ -1,3 +1,5 @@
+VERSION :=	0.0.1
+
 .PHONY:	dist
 
 all:
@@ -13,15 +15,17 @@ dist:
 	rm -rf dist
 
 	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" \
-		-o dist/ctrader-linux-x64/ctrader
+		-o dist/ctrader-$(VERSION)-linux-x64/ctrader
 
 	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" \
-		-o dist/ctrader-windows-x64/ctrader.exe
+		-o dist/ctrader-$(VERSION)-windows-x64/ctrader.exe
 
 	GOOS=darwin GOARCH=amd64 go build -ldflags "$(LDFLAGS)" \
-		-o dist/ctrader-macos-x64/ctrader
+		-o dist/ctrader-$(VERSION)-macos-x64/ctrader
 
 	cd dist && \
 		for d in *; do \
+			cp ../LICENSE.txt $$d; \
+			cp ../README.md $$d; \
 			zip -r $$d.zip $$d; \
 		done
