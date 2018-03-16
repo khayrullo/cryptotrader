@@ -25,38 +25,13 @@
 package kucoin
 
 import (
-	"net/http"
 	"fmt"
 	"time"
-	"encoding/base64"
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"io/ioutil"
 	"encoding/json"
 	"bytes"
 	"strings"
-	"sort"
 )
-
-const API_ROOT = "https://api.kucoin.com"
-
-type Client struct {
-	apiKey    string
-	apiSecret string
-}
-
-func NewClient() *Client {
-	client := &Client{}
-	return client
-}
-
-func NewClientWithAuth(key string, secret string) *Client {
-	client := NewClient()
-	client.apiKey = key
-	client.apiSecret = secret
-	return client
-}
 
 type UserInfo struct {
 	Raw string
@@ -271,69 +246,4 @@ func decode(data []byte, v interface{}) error {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 	return decoder.Decode(v)
-}
-
-func (c *Client) Get(endpoint string, params map[string]interface{}) (*http.Response, error) {
-	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
-	queryString := ""
-
-	if params != nil {
-		queryString = buildQueryString(params)
-		if queryString != "" {
-			url = fmt.Sprintf("%s?%s", url, queryString)
-		}
-	}
-
-	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-	if c.apiKey != "" && c.apiSecret != "" {
-		c.authenticateRequest(request, endpoint, queryString)
-	}
-	return http.DefaultClient.Do(request)
-}
-
-func (c *Client) authenticateRequest(request *http.Request, endpoint string,
-	queryString string) error {
-	nonce := c.getNonce()
-	signature := c.getSignature(endpoint, nonce, queryString)
-	request.Header.Add("KC-API-SIGNATURE", signature)
-	request.Header.Add("KC-API-NONCE", fmt.Sprintf("%d", nonce))
-	request.Header.Add("KC-API-KEY", c.apiKey)
-	return nil
-}
-
-func (c *Client) getNonce() int64 {
-	return time.Now().UnixNano() / int64(time.Millisecond)
-}
-
-func (c *Client) getSignature(endpoint string, nonce int64, queryString string) string {
-	signature := base64.StdEncoding.EncodeToString(
-		[]byte(fmt.Sprintf("%s/%d/%s", endpoint, nonce, queryString)))
-	mac := hmac.New(sha256.New, []byte(c.apiSecret))
-	mac.Write([]byte(signature))
-	return hex.EncodeToString(mac.Sum(nil))
-}
-
-func buildQueryString(params map[string]interface{}) string {
-	queryString := ""
-
-	keys := func() []string {
-		keys := []string{}
-		for key, _ := range params {
-			keys = append(keys, key)
-		}
-		sort.Strings(keys)
-		return keys
-	}()
-
-	for _, key := range keys {
-		if queryString != "" {
-			queryString = fmt.Sprintf("%s&", queryString)
-		}
-		queryString = fmt.Sprintf("%s%s=%v", queryString, key, params[key])
-	}
-
-	return queryString
 }

@@ -33,6 +33,6 @@ func getClient() *kucoin.Client {
 	apiKey := viper.GetString("kucoin.api.key")
 	apiSecret := viper.GetString("kucoin.api.secret")
 
-	client := kucoin.NewClientWithAuth(apiKey, apiSecret)
+	client := kucoin.NewClient(apiKey, apiSecret)
 	return client
 }
