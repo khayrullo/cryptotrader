@@ -129,6 +129,36 @@ type DealtOrdersResponse struct {
 	Raw string
 }
 
+type WalletRecordEntry struct {
+	Address         string      `json:"address"`
+	Amount          float64     `json:"amount"`
+	CoinType        string      `json:"coinType"`
+	Confirmation    int64       `json:"confirmation"`
+	CreatedAtMillis int64       `json:"createdAt"`
+	Fee             float64     `json:"fee"`
+	OID             string      `json:"oid"`
+	OuterWalletTxID string      `json:"outerWalletTxid"`
+	Remark          interface{} `json:"remark"`
+	Status          string      `json:"status"`
+	Type            string      `json:"type"`
+	UpdatedAtMillis int64       `json:"updateAt"`
+}
+
+type WalletRecordsResponse struct {
+	Success         bool   `json:"success"`
+	Code            string `json:"code"`
+	Message         string `json:"msg"`
+	TimestampMillis int64  `json:"timestamp"`
+	Data struct {
+		CurrPageNo int64               `json:"currPageNo"`
+		FirstPage  bool                `json:"firstPage"`
+		LastPage   bool                `json:"lastPage"`
+		Total      int64               `json:"total"`
+		Limit      int64               `json:"limit"`
+		Entries    []WalletRecordEntry `json:"datas"`
+	} `json:"data"`
+}
+
 func (c *Client) GetDealtOrders(limit int, page int) (*DealtOrdersResponse, error) {
 	endPoint := "/v1/order/dealt"
 
@@ -163,6 +193,80 @@ func (c *Client) GetDealtOrders(limit int, page int) (*DealtOrdersResponse, erro
 	return &orders, nil
 }
 
+func (c *Client) WalletRecords(coin string, page int) (*WalletRecordsResponse, error) {
+	endpoint := fmt.Sprintf("/v1/account/%s/wallet/records",
+		strings.ToUpper(coin))
+
+	params := map[string]interface{}{
+		"page": page,
+	}
+
+	httpResponse, err := c.Get(endpoint, params)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response WalletRecordsResponse
+	if err := decode(body, &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+type TickResponse struct {
+	Success         bool        `json:"success"`
+	Code            string      `json:"code"`
+	Message         string      `json:"msg"`
+	TimestampMillis int64       `json:"timestamp"`
+	Entries         []TickEntry `json:"data"`
+}
+
+type TickEntry struct {
+	CoinType       string  `json:"coinType"`
+	Trading        bool    `json:"trading"`
+	Symbol         string  `json:"symbol"`
+	LastDealPrice  float64 `json:"lastDealPrice"`
+	Buy            float64 `json:"buy"`
+	Sell           float64 `json:"sell"`
+	Change         float64 `json:"change"`
+	CoinTypePair   string  `json:"coinTypePair"`
+	Sort           int64   `json:"sort"`
+	FeeRate        float64 `json:"feeRate"`
+	VolValue       float64 `json:"volValue"`
+	High           float64 `json:"high"`
+	DateTimeMilles int64   `json:"datetime"`
+	Vol            float64 `json:"vol"`
+	Low            float64 `json:"low"`
+	ChangeRate     float64 `json:"changeRate"`
+}
+
+func (c *Client) GetTick() (*TickResponse, error) {
+	endpoint := "/v1/open/tick"
+
+	httpResponse, err := c.Get(endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response TickResponse
+	if err := decode(body, &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
 func decode(data []byte, v interface{}) error {
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
@@ -170,7 +274,6 @@ func decode(data []byte, v interface{}) error {
 }
 
 func (c *Client) Get(endpoint string, params map[string]interface{}) (*http.Response, error) {
-
 	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
 	queryString := ""
 

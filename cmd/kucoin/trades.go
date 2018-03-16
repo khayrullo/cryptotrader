@@ -127,7 +127,7 @@ func renderDefault(trade *kucoin.Trade) {
 			"Fee: %.8f %s; "+
 			"\n",
 		trade.Timestamp.Format("2006-01-02 15:04:05"),
-		trade.Direction,
+		strings.Title(strings.ToLower(trade.Direction)),
 		trade.CoinType,
 		trade.CoinTypePair,
 		trade.Amount, trade.CoinType,

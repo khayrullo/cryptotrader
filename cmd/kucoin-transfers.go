@@ -22,28 +22,34 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package util
+package cmd
 
 import (
-	"time"
-	"math"
-	"encoding/json"
+	"github.com/spf13/cobra"
+	"gitlab.com/crankykernel/ctrader/cmd/kucoin"
 )
 
-func Float64ToTime(value float64) (time.Time) {
-	sec, subsec := math.Modf(value)
-	return time.Unix(int64(sec), int64(subsec*(1e9)))
+var kucoinTransfersCmd = &cobra.Command{
+	Use:   "transfers [coin...]",
+	Short: "Print deposits and withdrawals",
+	Long: `Print deposits and withdrawals for one or more coins
+
+Example: List BTC and LTC transfers:
+
+    ctrader kucoin transfers BTC LTC
+
+Example: List transfers for all coins:
+
+    ctrader kucoin transfers
+
+Warning: Listing transfers for all coins can take a while and may hit
+         API limits.
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		kucoin.Transfers(args)
+	},
 }
 
-func JsonNumberToTime(value json.Number) (time.Time, error) {
-	v64, err := value.Float64()
-	if err != nil {
-		return time.Time{}, err
-	}
-	return Float64ToTime(v64), nil
-}
-
-func MillisToTime(millis int64) (time.Time) {
-	secs := millis / 1000
-	return time.Unix(secs, 0)
+func init() {
+	kucoinCmd.AddCommand(kucoinTransfersCmd)
 }

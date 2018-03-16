@@ -28,10 +28,16 @@ Make it prettier with `jq`:
 ctrader gdax ticker | jq -c .
 ```
 
-### KuCoin - List Trades
+### KuCoin - Print Trades
 
 ```
 ctrader kucoin --api-key <key> --api-secret <secret> trades
+```
+
+### KuCoin - Print Transfers (Deposits and Withdrawals)
+
+```
+ctrader kucoin transfers
 ```
 
 Optionally use the KUCOIN_API_KEY and KUCOIN_API_SECRET environment variables

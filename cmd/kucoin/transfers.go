@@ -22,28 +22,60 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package util
+package kucoin
 
 import (
-	"time"
-	"math"
-	"encoding/json"
+	"log"
+	"gitlab.com/crankykernel/ctrader/util"
+	"fmt"
 )
 
-func Float64ToTime(value float64) (time.Time) {
-	sec, subsec := math.Modf(value)
-	return time.Unix(int64(sec), int64(subsec*(1e9)))
-}
+func Transfers(args []string) {
+	coins := args
 
-func JsonNumberToTime(value json.Number) (time.Time, error) {
-	v64, err := value.Float64()
-	if err != nil {
-		return time.Time{}, err
+	client := getClient()
+
+	if len(coins) == 0 {
+		ticks, err := client.GetTick()
+		if err != nil {
+			log.Fatal("error: failed to get coins: ", err)
+		}
+		coinTypes := map[string]bool{}
+		for _, tick := range ticks.Entries {
+			coinTypes[tick.CoinType] = true
+		}
+		for coinType, _ := range coinTypes {
+			coins = append(coins, coinType)
+		}
 	}
-	return Float64ToTime(v64), nil
-}
 
-func MillisToTime(millis int64) (time.Time) {
-	secs := millis / 1000
-	return time.Unix(secs, 0)
+	for _, coin := range coins {
+		page := 1
+		for {
+			response, err := client.WalletRecords(coin, page)
+			if err != nil {
+				log.Fatal("error: ", err)
+			}
+			if len(response.Data.Entries) == 0 {
+				break;
+			}
+
+			for _, entry := range response.Data.Entries {
+				timestamp := util.MillisToTime(entry.CreatedAtMillis)
+				fmt.Printf("Timestamp: %s, "+
+					"Coin: %s, Type: %s, "+
+					"Status: %s, "+
+					"Amount: %f, Fee: %f\n",
+					timestamp.Format("2006-01-02 15:04:05"),
+					entry.CoinType,
+					entry.Status,
+					entry.Type,
+					entry.Amount,
+					entry.Fee,
+				)
+			}
+
+			page += 1
+		}
+	}
 }

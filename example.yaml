@@ -1,0 +1,17 @@
+# Example ~/.ctrader.yaml
+#
+# Create a file list this, or copy this one to ~/.ctrader. Or specify its
+# location with the --config command line option.
+
+# KuCoin API key and secret
+#kucoin.api.key: xxx
+#kucoin.api.secret: xxx
+
+# Kraken API key and secret.
+#kraken.api.key: xxx
+#kraken.api.secret: xxx
+
+# QuadrigaCX API key and secret. Also requires your client-id.
+#quadriga.api.client-id: xxx
+#quadriga.api.key: xxx
+#quadriga.api.secret: xxx
