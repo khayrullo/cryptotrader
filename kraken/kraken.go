@@ -252,4 +252,3 @@ func decodeBody(r *http.Response, v RawSetter) error {
 	v.SetRaw(string(raw))
 	return nil
 }
-
