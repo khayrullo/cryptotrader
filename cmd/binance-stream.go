@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/binance"
+	"gitlab.com/crankykernel/cryptotrader/binance"
 	"log"
 	"fmt"
 	"encoding/json"

@@ -26,7 +26,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/cmd/tickerlogger"
+	"gitlab.com/crankykernel/cryptotrader/cmd/tickerlogger"
 )
 
 var tickerLoggerCmd = &cobra.Command{
@@ -38,7 +38,7 @@ disabled by setting a non-0 interval value.
 
 Example:
 
-  ctrader ticker-logging kraken:xbtusd,xbtcad binance:bnbusdt binance:btcusdt
+  cryptotrader ticker-logging kraken:xbtusd,xbtcad binance:bnbusdt binance:btcusdt
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		tickerlogger.TickerLoggerCommand(args)

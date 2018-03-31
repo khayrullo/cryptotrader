@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/quadriga"
+	"gitlab.com/crankykernel/cryptotrader/quadriga"
 	"log"
 )
 

@@ -26,7 +26,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/cmd/kucoin"
+	"gitlab.com/crankykernel/cryptotrader/cmd/kucoin"
 )
 
 var kucoinGetCmd = &cobra.Command{

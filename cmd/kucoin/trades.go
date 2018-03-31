@@ -27,7 +27,7 @@ package kucoin
 import (
 	"log"
 	"fmt"
-	"gitlab.com/crankykernel/ctrader/kucoin"
+	"gitlab.com/crankykernel/cryptotrader/kucoin"
 	"encoding/json"
 	"strings"
 )

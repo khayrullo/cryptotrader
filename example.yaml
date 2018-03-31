@@ -1,6 +1,6 @@
-# Example ~/.ctrader.yaml
+# Example ~/.cryptotrader.yaml
 #
-# Create a file list this, or copy this one to ~/.ctrader. Or specify its
+# Create a file list this, or copy this one to ~/.cryptotrader. Or specify its
 # location with the --config command line option.
 
 # KuCoin API key and secret

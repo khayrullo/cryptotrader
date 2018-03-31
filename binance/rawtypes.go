@@ -3,7 +3,7 @@ package binance
 import (
 	"strconv"
 	"time"
-	"gitlab.com/crankykernel/ctrader/util"
+	"gitlab.com/crankykernel/cryptotrader/util"
 )
 
 // RawTicker24 is the deconstruction of the raw 24hr JSON ticker as sent from

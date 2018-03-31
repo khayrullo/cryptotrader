@@ -16,8 +16,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/binance"
-	"gitlab.com/crankykernel/ctrader/cmd/common"
+	"gitlab.com/crankykernel/cryptotrader/binance"
+	"gitlab.com/crankykernel/cryptotrader/cmd/common"
 )
 
 // getCmd represents the get command

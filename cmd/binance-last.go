@@ -26,7 +26,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/cmd/binance"
+	"gitlab.com/crankykernel/cryptotrader/cmd/binance"
 )
 
 var lastCmd = &cobra.Command{

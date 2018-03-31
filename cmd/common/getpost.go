@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"fmt"
-	"gitlab.com/crankykernel/ctrader/core"
+	"gitlab.com/crankykernel/cryptotrader/core"
 )
 
 func doPostOrGet(poster core.Poster, getter core.Getter, args []string) {

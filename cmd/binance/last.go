@@ -25,7 +25,7 @@
 package binance
 
 import (
-	"gitlab.com/crankykernel/ctrader/binance"
+	"gitlab.com/crankykernel/cryptotrader/binance"
 	"log"
 	"fmt"
 	"strings"

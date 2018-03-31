@@ -36,7 +36,7 @@ import (
 var cfgFile string
 
 var rootCmd = &cobra.Command{
-	Use:   "ctrader",
+	Use:   "cryptotrader",
 	Short: "Crypto trading utilities",
 }
 
@@ -54,7 +54,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "",
-		"config file (default is $HOME/.ctrader.yaml)")
+		"config file (default is $HOME/.cryptotrader.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -75,7 +75,7 @@ func initConfig() {
 		}
 
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".ctrader")
+		viper.SetConfigName(".cryptotrader")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

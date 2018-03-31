@@ -25,7 +25,7 @@
 package kraken
 
 import (
-	"gitlab.com/crankykernel/ctrader/kraken"
+	"gitlab.com/crankykernel/cryptotrader/kraken"
 	"github.com/spf13/viper"
 	"log"
 	"fmt"

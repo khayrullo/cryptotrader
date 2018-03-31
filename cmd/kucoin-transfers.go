@@ -26,7 +26,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/ctrader/cmd/kucoin"
+	"gitlab.com/crankykernel/cryptotrader/cmd/kucoin"
 )
 
 var kucoinTransfersCmd = &cobra.Command{
@@ -36,11 +36,11 @@ var kucoinTransfersCmd = &cobra.Command{
 
 Example: List BTC and LTC transfers:
 
-    ctrader kucoin transfers BTC LTC
+    cryptotrader kucoin transfers BTC LTC
 
 Example: List transfers for all coins:
 
-    ctrader kucoin transfers
+    cryptotrader kucoin transfers
 
 Warning: Listing transfers for all coins can take a while and may hit
          API limits.
