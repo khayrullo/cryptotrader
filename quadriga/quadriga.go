@@ -54,6 +54,10 @@ func NewClient(clientId interface{}, apiKey string, apiSecret string) *Client {
 	return quadriga
 }
 
+func NewAnonymousClient() *Client {
+	return &Client{}
+}
+
 func (c *Client) Post(endpoint string, params map[string]interface{}) (*http.Response, error) {
 	url := c.buildURL(endpoint)
 	body, err := json.Marshal(c.authenticateParams(params))
@@ -164,4 +168,11 @@ func (c *Client) Books() ([]string, error) {
 	}
 
 	return books, nil
+}
+
+// RequestEngineOrders calls an undocumented URL that the Quadriga frontend
+// userse to get the order book.
+func (c *Client) RequestEngineOrders(book string) (*http.Response, error) {
+	return http.DefaultClient.Get(fmt.Sprintf(
+		"https://www.quadrigacx.com/engine/orders/%s", book))
 }
