@@ -136,3 +136,15 @@ func (c *RestClient) decodeBody(r *http.Response, v interface{}) ([]byte, error)
 	}
 	return raw, nil
 }
+
+func (c *RestClient) GetAllSymbols() ([]string, error) {
+	lastTrades, err := c.Last()
+	if err != nil {
+		return nil, err
+	}
+	symbols := []string{}
+	for _, trade := range lastTrades {
+		symbols = append(symbols, trade.Symbol)
+	}
+	return symbols, nil
+}

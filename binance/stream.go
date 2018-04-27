@@ -28,6 +28,7 @@ import (
 	"github.com/gorilla/websocket"
 	"strings"
 	"fmt"
+	"net/http"
 )
 
 const WS_STREAM_URL = "wss://stream.binance.com:9443"
@@ -44,9 +45,13 @@ func NewStreamClient() *StreamClient {
 func (c *StreamClient) Connect(streams ... string) (err error) {
 	url := fmt.Sprintf("%s/stream?streams=%s", WS_STREAM_URL,
 		strings.Join(streams, "/"))
-	c.conn, _, err = websocket.DefaultDialer.Dial(url, nil)
+	var httpResponse *http.Response
+	c.conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		return err
+	}
+	if httpResponse.StatusCode != http.StatusSwitchingProtocols {
+		return fmt.Errorf("%s", httpResponse.Status)
 	}
 	return nil
 }
@@ -57,9 +62,13 @@ func (c *StreamClient) Close() {
 
 func (c *StreamClient) ConnectSingle(stream string) (err error) {
 	url := fmt.Sprintf("%s/ws/%s", WS_STREAM_URL, stream)
-	c.conn, _, err = websocket.DefaultDialer.Dial(url, nil)
+	var httpResponse *http.Response
+	c.conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		return err
+	}
+	if httpResponse.StatusCode != http.StatusSwitchingProtocols {
+		return fmt.Errorf("%s", httpResponse.Status)
 	}
 	return nil
 }

@@ -34,6 +34,11 @@ type RawTicker24 struct {
 	TotalNumberTrades    int64  `json:"n"`
 }
 
+type RawStreamAllMarketTicker24 struct {
+	Stream  string        `json:"stream"`
+	Tickers []RawTicker24 `json:"data"`
+}
+
 type Ticker24 struct {
 	Timestamp      time.Time `json:"timestamp"`
 	Symbol         string    `json:"symbol"`
