@@ -31,6 +31,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"strings"
+	"gitlab.com/crankykernel/cryptotrader/util"
 )
 
 type UserInfo struct {
@@ -202,6 +203,10 @@ type TickResponse struct {
 	Entries         []TickEntry `json:"data"`
 }
 
+func (t *TickResponse) GetTimestamp() time.Time {
+	return util.MillisToTime(t.TimestampMillis)
+}
+
 type TickEntry struct {
 	CoinType       string  `json:"coinType"`
 	Trading        bool    `json:"trading"`
@@ -215,7 +220,7 @@ type TickEntry struct {
 	FeeRate        float64 `json:"feeRate"`
 	VolValue       float64 `json:"volValue"`
 	High           float64 `json:"high"`
-	DateTimeMilles int64   `json:"datetime"`
+	DateTimeMillis int64   `json:"datetime"`
 	Vol            float64 `json:"vol"`
 	Low            float64 `json:"low"`
 	ChangeRate     float64 `json:"changeRate"`
@@ -232,6 +237,10 @@ func (c *Client) GetTick() (*TickResponse, error) {
 	body, err := ioutil.ReadAll(httpResponse.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	if httpResponse.StatusCode != 200 {
+		return nil, fmt.Errorf("%v", httpResponse.Status)
 	}
 
 	var response TickResponse

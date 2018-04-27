@@ -49,6 +49,10 @@ func NewClient(key string, secret string) *Client {
 	return &client
 }
 
+func NewAnonymousClient() *Client {
+	return &Client{}
+}
+
 func (c *Client) Get(endpoint string, params map[string]interface{}) (*http.Response, error) {
 	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
 	queryString := ""
