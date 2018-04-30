@@ -1,9 +1,12 @@
 package binance
 
 import (
-	"strconv"
 	"time"
+	"strings"
+	"encoding/json"
+	"fmt"
 	"gitlab.com/crankykernel/cryptotrader/util"
+	"strconv"
 )
 
 // RawTicker24 is the deconstruction of the raw 24hr JSON ticker as sent from
@@ -34,11 +37,7 @@ type RawTicker24 struct {
 	TotalNumberTrades    int64  `json:"n"`
 }
 
-type RawStreamAllMarketTicker24 struct {
-	Stream  string        `json:"stream"`
-	Tickers []RawTicker24 `json:"data"`
-}
-
+// Ticker24 is a "nicer" to use variation of RawTicker24.
 type Ticker24 struct {
 	Timestamp      time.Time `json:"timestamp"`
 	Symbol         string    `json:"symbol"`
@@ -70,4 +69,73 @@ func NewTicker24FromRawTicker24(raw RawTicker24) Ticker24 {
 	ticker.Bid, _ = strconv.ParseFloat(raw.Bid, 64)
 
 	return ticker
+}
+
+type RawStreamAllMarketTicker24 struct {
+	Stream  string        `json:"stream"`
+	Tickers []RawTicker24 `json:"data"`
+}
+
+// Useful for decoding AggTrade's when they are coming from a combined stream,
+// and you know all message types will be an "aggTrade".
+type RawStreamAggTrade struct {
+	Stream   string      `json:"stream"`
+	AggTrade RawAggTrade `json:"data"`
+}
+
+type RawStreamData struct {
+	Stream string      `json:"stream"`
+	Data   interface{} `json:"data"`
+}
+
+type RawStreamMessage struct {
+	Stream string `json:"stream"`
+
+	// Data for !ticker@arr messages.
+	Tickers []RawTicker24
+
+	// Data for <symbol>@aggTrade messages.
+	AggTrade RawAggTrade
+
+	// For a stream that is unknown, decode the data into an interface{}.
+	UnknownData interface{}
+
+	RawData []byte
+}
+
+func (r *RawStreamMessage) UnmarshalJSON(b []byte) error {
+	r.RawData = b
+	prefix := string(b[0:40])
+	if strings.HasPrefix(prefix, `{"stream":"!ticker@arr"`) {
+		var message RawStreamAllMarketTicker24
+		if err := json.Unmarshal(b, &message); err != nil {
+			return err
+		}
+		r.Stream = message.Stream
+		r.Tickers = message.Tickers
+		return nil
+	} else if strings.Index(prefix, "@aggTrade") > -1 {
+		var message RawStreamAggTrade
+		if err := json.Unmarshal(b, &message); err != nil {
+			return err
+		}
+		r.Stream = message.Stream
+		r.AggTrade = message.AggTrade
+		return nil
+	} else if strings.HasPrefix(prefix, `{"stream":"`) {
+		var message RawStreamData
+		if err := json.Unmarshal(b, &message); err != nil {
+			return err
+		}
+		r.Stream = message.Stream
+		r.UnknownData = message.Data
+		return nil
+	}
+	return fmt.Errorf("not part of a multi-stream")
+}
+
+func DecodeRawStreamMessage(b []byte) (RawStreamMessage, error) {
+	var message RawStreamMessage
+	err := json.Unmarshal(b, &message)
+	return message, err
 }

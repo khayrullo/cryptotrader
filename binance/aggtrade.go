@@ -20,13 +20,6 @@ type RawAggTrade struct {
 	Ignored         bool    `json:"M"`
 }
 
-// Useful for decoding AggTrade's when they are coming from a combined stream,
-// and you know all message types will be an "aggTrade".
-type RawStreamAggTrade struct {
-	Stream   string      `json:"stream"`
-	AggTrade RawAggTrade `json:"data"`
-}
-
 type AggTrade struct {
 	Timestamp  time.Time
 	Symbol     string
