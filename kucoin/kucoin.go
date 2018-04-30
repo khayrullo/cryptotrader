@@ -201,6 +201,7 @@ type TickResponse struct {
 	Message         string      `json:"msg"`
 	TimestampMillis int64       `json:"timestamp"`
 	Entries         []TickEntry `json:"data"`
+	Raw             string
 }
 
 func (t *TickResponse) GetTimestamp() time.Time {
@@ -247,6 +248,8 @@ func (c *Client) GetTick() (*TickResponse, error) {
 	if err := decode(body, &response); err != nil {
 		return nil, err
 	}
+
+	response.Raw = string(body)
 
 	return &response, nil
 }
