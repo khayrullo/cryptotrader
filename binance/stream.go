@@ -56,10 +56,6 @@ func (c *StreamClient) Connect(streams ... string) (err error) {
 	return nil
 }
 
-func (c *StreamClient) Close() {
-	c.conn.Close()
-}
-
 func (c *StreamClient) ConnectSingle(stream string) (err error) {
 	url := fmt.Sprintf("%s/ws/%s", WS_STREAM_URL, stream)
 	var httpResponse *http.Response
@@ -73,12 +69,16 @@ func (c *StreamClient) ConnectSingle(stream string) (err error) {
 	return nil
 }
 
-func (c *StreamClient) NextMessage() (messageType int, body []byte, err error) {
+func (c *StreamClient) Close() {
+	c.conn.Close()
+}
+
+func (c *StreamClient) Next() (messageType int, body []byte, err error) {
 	return c.conn.ReadMessage()
 }
 
 // Next reads the next message into a generic map.
-func (c *StreamClient) Next() (interface{}, error) {
+func (c *StreamClient) NextJSON() (interface{}, error) {
 	var message interface{}
 	err := c.conn.ReadJSON(&message)
 	return message, err

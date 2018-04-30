@@ -28,7 +28,7 @@ names provided on the command line.
 			}
 		}
 		for {
-			msg, err := client.Next()
+			msg, err := client.NextJSON()
 			if err != nil {
 				log.Fatal("error: ", err)
 			}
