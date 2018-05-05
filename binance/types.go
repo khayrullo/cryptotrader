@@ -5,7 +5,7 @@ import (
 	"strings"
 	"encoding/json"
 	"fmt"
-	"gitlab.com/crankykernel/cryptotrader/util"
+	"github.com/crankykernel/cryptotrader/util"
 	"strconv"
 )
 

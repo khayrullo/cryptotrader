@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"fmt"
-	"gitlab.com/crankykernel/cryptotrader/core"
+	"github.com/crankykernel/cryptotrader/core"
 )
 
 func doPostOrGet(poster core.Poster, getter core.Getter, args []string) {
@@ -35,6 +35,10 @@ func doPostOrGet(poster core.Poster, getter core.Getter, args []string) {
 		response, err = getter.Get(endpoint, params)
 	} else {
 		log.Fatal("error: no poster or getter provided")
+	}
+
+	if response == nil {
+		log.Fatal("error: nil response received")
 	}
 
 	body, err := ioutil.ReadAll(response.Body)

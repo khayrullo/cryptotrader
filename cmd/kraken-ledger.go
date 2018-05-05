@@ -26,7 +26,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/cryptotrader/cmd/kraken"
+	"github.com/crankykernel/cryptotrader/cmd/kraken"
 )
 
 var krakenLedgerCmd = &cobra.Command{

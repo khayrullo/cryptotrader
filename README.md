@@ -11,7 +11,7 @@ https://gitlab.com/crankykernel/cryptotrader/-/jobs/artifacts/master/browse?job=
 ## Installation with Go Get
 
 ```
-go get gitlab.com/crankykernel/cryptotrader
+go get github.com/crankykernel/cryptotrader
 ```
 
 ## Tools

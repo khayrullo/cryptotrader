@@ -16,18 +16,30 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/cryptotrader/binance"
-	"gitlab.com/crankykernel/cryptotrader/cmd/common"
+	"github.com/crankykernel/cryptotrader/binance"
+	"github.com/crankykernel/cryptotrader/cmd/common"
+	"github.com/spf13/viper"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
+var binanceGetCmd = &cobra.Command{
 	Use: "get",
 	Run: func(cmd *cobra.Command, args []string) {
-		common.Get(binance.NewClient(), args)
+		var clientConfig *binance.RestClientAuth = nil
+		auth, _ := cmd.Flags().GetBool("auth")
+		if auth {
+			clientConfig = &binance.RestClientAuth{
+				ApiKey:    viper.GetString("binance.api.key"),
+				ApiSecret: viper.GetString("binance.api.secret"),
+			}
+		}
+		common.Get(binance.NewClient(clientConfig), args)
 	},
 }
 
 func init() {
-	binanceCmd.AddCommand(getCmd)
+	flags := binanceGetCmd.Flags()
+
+	flags.Bool("auth", false, "Send authenticated request")
+
+	binanceCmd.AddCommand(binanceGetCmd)
 }

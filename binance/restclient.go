@@ -32,15 +32,28 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"strconv"
+	"time"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
+	"log"
 )
 
 const API_ROOT = "https://api.binance.com"
 
-type RestClient struct {
+type RestClientAuth struct {
+	ApiKey    string
+	ApiSecret string
 }
 
-func NewClient() *RestClient {
-	client := RestClient{}
+type RestClient struct {
+	auth *RestClientAuth
+}
+
+func NewClient(config *RestClientAuth) *RestClient {
+	client := RestClient{
+		auth: config,
+	}
 	return &client
 }
 
@@ -49,6 +62,15 @@ func (c *RestClient) Get(endpoint string, params map[string]interface{}) (*http.
 	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
 	queryString := ""
 
+	if params == nil {
+		params = map[string]interface{}{}
+	}
+
+	if c.auth != nil {
+		params["recvWindow"] = 5000
+		params["timestamp"] = time.Now().UnixNano() / 1000000
+	}
+
 	if params != nil {
 		queryString = c.BuildQueryString(params)
 		if queryString != "" {
@@ -56,10 +78,65 @@ func (c *RestClient) Get(endpoint string, params map[string]interface{}) (*http.
 		}
 	}
 
+	if c.auth != nil {
+		mac := hmac.New(sha256.New, []byte(c.auth.ApiSecret))
+		mac.Write([]byte(queryString))
+		signature := hex.EncodeToString(mac.Sum(nil))
+		url = fmt.Sprintf("%s&signature=%s",
+			url, signature)
+	}
+
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	if c.auth != nil && c.auth.ApiKey != "" {
+		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
+	}
+
+	log.Println(request.URL)
+
+	return http.DefaultClient.Do(request)
+}
+
+func (c *RestClient) Post(endpoint string, params map[string]interface{}) (*http.Response, error) {
+	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
+	queryString := ""
+
+	if params == nil {
+		params = map[string]interface{}{}
+	}
+
+	if c.auth != nil && c.auth.ApiSecret != "" {
+		params["recvWindow"] = 5000
+		params["timestamp"] = time.Now().UnixNano() / 1000000
+	}
+
+	if params != nil {
+		queryString = c.BuildQueryString(params)
+		if queryString != "" {
+			url = fmt.Sprintf("%s?%s", url, queryString)
+		}
+	}
+
+	if c.auth != nil && c.auth.ApiSecret != "" {
+		mac := hmac.New(sha256.New, []byte(c.auth.ApiSecret))
+		mac.Write([]byte(queryString))
+		signature := hex.EncodeToString(mac.Sum(nil))
+		url = fmt.Sprintf("%s&signature=%s",
+			url, signature)
+	}
+
+	request, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.auth != nil && c.auth.ApiKey != "" {
+		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
+	}
+
 	return http.DefaultClient.Do(request)
 }
 

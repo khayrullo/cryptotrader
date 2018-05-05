@@ -25,7 +25,7 @@
 package binance
 
 import (
-	"gitlab.com/crankykernel/cryptotrader/binance"
+	"github.com/crankykernel/cryptotrader/binance"
 	"log"
 	"fmt"
 	"strings"
@@ -33,7 +33,7 @@ import (
 )
 
 func LastCommand(args []string) {
-	client := binance.NewClient()
+	client := binance.NewClient(nil)
 	response, err := client.Last()
 	if err != nil {
 		log.Fatal("error: ", err)

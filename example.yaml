@@ -15,3 +15,7 @@
 #quadriga.api.client-id: xxx
 #quadriga.api.key: xxx
 #quadriga.api.secret: xxx
+
+# Binance API key and secret.
+#binance.api.key: xxx
+#binance.api.secret: xxx

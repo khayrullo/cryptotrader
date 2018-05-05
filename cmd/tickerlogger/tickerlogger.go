@@ -15,8 +15,8 @@
 package tickerlogger
 
 import (
-	"gitlab.com/crankykernel/cryptotrader/binance"
-	"gitlab.com/crankykernel/cryptotrader/kraken"
+	"github.com/crankykernel/cryptotrader/binance"
+	"github.com/crankykernel/cryptotrader/kraken"
 	"strings"
 	"log"
 	"time"
@@ -67,7 +67,7 @@ func TickerLoggerCommand(args []string) {
 			}
 		case "BINANCE":
 			if Binance.Client == nil {
-				Binance.Client = binance.NewClient()
+				Binance.Client = binance.NewClient(nil)
 			}
 			for _, symbol := range strings.Split(symbols, ",") {
 				Binance.Symbols = append(Binance.Symbols, strings.ToUpper(symbol))
