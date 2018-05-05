@@ -4,9 +4,9 @@ build:
   script: |
     apt-get update
     apt-get -y install zip
-    mkdir -p /go/src/gitlab.com/crankykernel
-    cp -a . /go/src/gitlab.com/crankykernel/ctrader
-    cd /go/src/gitlab.com/crankykernel/ctrader
+    mkdir -p /go/src/github.com/crankykernel
+    cp -a . /go/src/github.com/crankykernel/ctrader
+    cd /go/src/github.com/crankykernel/ctrader
     go get -u github.com/golang/dep/cmd/dep
     dep ensure -v
     go build -v
