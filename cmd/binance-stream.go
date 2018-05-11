@@ -27,6 +27,7 @@ names provided on the command line.
 				log.Fatal("error: ", err)
 			}
 		}
+		log.Println("Connected!")
 		for {
 			msg, err := client.NextJSON()
 			if err != nil {
