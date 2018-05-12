@@ -151,6 +151,7 @@ func (c *Client) GetDealtOrders(limit int, page int) (*DealtOrdersResponse, erro
 	if err != nil {
 		return nil, err
 	}
+	defer response.Body.Close()
 	rawBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
@@ -181,6 +182,7 @@ func (c *Client) WalletRecords(coin string, page int) (*WalletRecordsResponse, e
 	if err != nil {
 		return nil, err
 	}
+	defer httpResponse.Body.Close()
 
 	body, err := ioutil.ReadAll(httpResponse.Body)
 	if err != nil {
@@ -234,6 +236,7 @@ func (c *Client) GetTick() (*TickResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer httpResponse.Body.Close()
 
 	body, err := ioutil.ReadAll(httpResponse.Body)
 	if err != nil {

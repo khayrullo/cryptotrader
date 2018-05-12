@@ -179,6 +179,7 @@ func (c *RestClient) Last() ([]LastResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer httpResponse.Body.Close()
 	responseRaw := []LastResponseRaw{}
 	_, err = c.decodeBody(httpResponse, &responseRaw)
 	if err != nil {
