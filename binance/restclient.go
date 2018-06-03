@@ -140,6 +140,85 @@ func (c *RestClient) Post(endpoint string, params map[string]interface{}) (*http
 	return http.DefaultClient.Do(request)
 }
 
+// Send a POST request with only the API key and no other authentication.
+func (c *RestClient) PostWithApiKey(endpoint string, params map[string]interface{}) (*http.Response, error) {
+	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
+	queryString := ""
+
+	if params == nil {
+		params = map[string]interface{}{}
+	}
+
+	if params != nil {
+		queryString = c.BuildQueryString(params)
+		if queryString != "" {
+			url = fmt.Sprintf("%s?%s", url, queryString)
+		}
+	}
+
+	request, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.auth != nil && c.auth.ApiKey != "" {
+		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
+	}
+
+	return http.DefaultClient.Do(request)
+}
+
+func (c *RestClient) Delete(endpoint string, params map[string]interface{}) (*http.Response, error) {
+	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
+	queryString := ""
+
+	if params == nil {
+		params = map[string]interface{}{}
+	}
+
+	if c.auth != nil && c.auth.ApiSecret != "" {
+		params["recvWindow"] = 5000
+		params["timestamp"] = time.Now().UnixNano() / 1000000
+	}
+
+	if params != nil {
+		queryString = c.BuildQueryString(params)
+		if queryString != "" {
+			url = fmt.Sprintf("%s?%s", url, queryString)
+		}
+	}
+
+	if c.auth != nil && c.auth.ApiSecret != "" {
+		mac := hmac.New(sha256.New, []byte(c.auth.ApiSecret))
+		mac.Write([]byte(queryString))
+		signature := hex.EncodeToString(mac.Sum(nil))
+		url = fmt.Sprintf("%s&signature=%s",
+			url, signature)
+	}
+
+	request, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.auth != nil && c.auth.ApiKey != "" {
+		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
+	}
+
+	return http.DefaultClient.Do(request)
+}
+
+func (c *RestClient) DoPut(path string) (*http.Response, error) {
+	url := fmt.Sprintf("%s%s", API_ROOT, path)
+	request, err := http.NewRequest("PUT", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
+
+	return http.DefaultClient.Do(request)
+}
+
 func (c *RestClient) BuildQueryString(params map[string]interface{}) string {
 	queryString := ""
 

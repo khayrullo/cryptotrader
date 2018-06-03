@@ -34,7 +34,16 @@ import (
 const WS_STREAM_URL = "wss://stream.binance.com:9443"
 
 type StreamClient struct {
-	conn *websocket.Conn
+	Conn *websocket.Conn
+}
+
+func OpenSingleStream(stream string) (*StreamClient, error) {
+	client := NewStreamClient()
+	err := client.ConnectSingle(stream)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
 }
 
 func NewStreamClient() *StreamClient {
@@ -46,7 +55,7 @@ func (c *StreamClient) Connect(streams ... string) (err error) {
 	url := fmt.Sprintf("%s/stream?streams=%s", WS_STREAM_URL,
 		strings.Join(streams, "/"))
 	var httpResponse *http.Response
-	c.conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
+	c.Conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		return err
 	}
@@ -59,7 +68,7 @@ func (c *StreamClient) Connect(streams ... string) (err error) {
 func (c *StreamClient) ConnectSingle(stream string) (err error) {
 	url := fmt.Sprintf("%s/ws/%s", WS_STREAM_URL, stream)
 	var httpResponse *http.Response
-	c.conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
+	c.Conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		return err
 	}
@@ -70,16 +79,16 @@ func (c *StreamClient) ConnectSingle(stream string) (err error) {
 }
 
 func (c *StreamClient) Close() {
-	c.conn.Close()
+	c.Conn.Close()
 }
 
 func (c *StreamClient) Next() (messageType int, body []byte, err error) {
-	return c.conn.ReadMessage()
+	return c.Conn.ReadMessage()
 }
 
 // Next reads the next message into a generic map.
 func (c *StreamClient) NextJSON() (interface{}, error) {
 	var message interface{}
-	err := c.conn.ReadJSON(&message)
+	err := c.Conn.ReadJSON(&message)
 	return message, err
 }
