@@ -38,7 +38,7 @@ func BinanceApiProxy(w http.ResponseWriter, r *http.Request) {
 	for key, val := range response.Header {
 		w.Header()[key] = val
 	}
-
+	w.WriteHeader(response.StatusCode)
 	io.Copy(w, response.Body)
 }
 
