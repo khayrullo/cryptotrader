@@ -28,7 +28,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"fmt"
-	"log"
+	"encoding/json"
 )
 
 type RestApiError struct {
@@ -76,7 +76,6 @@ func (c *RestClient) PutUserStreamKeepAlive(listenKey string) error {
 		"listenKey": listenKey,
 	})
 	path := fmt.Sprintf("/api/v1/userDataStream?%s", queryString)
-	log.Println(path)
 	httpResponse, err := c.DoPut(path)
 	if err != nil {
 		return err
@@ -90,31 +89,33 @@ func (c *RestClient) PutUserStreamKeepAlive(listenKey string) error {
 type OrderSide string
 
 const (
-	BUY  OrderSide = "BUY"
-	SELL OrderSide = "SELL"
+	OrderSideBuy  OrderSide = "BUY"
+	OrderSideSell OrderSide = "SELL"
 )
 
 type OrderType string
 
 const (
-	LIMIT  OrderType = "LIMIT"
-	MARKET OrderType = "MARKET"
+	OrderTypeLimit  OrderType = "LIMIT"
+	OrderTypeMarket OrderType = "MARKET"
 )
 
 type TimeInForce string
 
 const (
-	GTC TimeInForce = "GTC"
-	IOC TimeInForce = "IOC"
-	FOK TimeInForce = "FOK"
+	TimeInForceGTC TimeInForce = "GTC"
+	TimeInForceIOC TimeInForce = "IOC"
+	TimeInForceFOK TimeInForce = "FOK"
 )
 
 // Order status / execution type.
 type OrderStatus string
 
 const (
-	OrderStatusNew      OrderStatus = "NEW"
-	OrderStatusCanceled OrderStatus = "CANCELED"
+	OrderStatusNew             OrderStatus = "NEW"
+	OrderStatusCanceled        OrderStatus = "CANCELED"
+	OrderStatusFilled          OrderStatus = "FILLED"
+	OrderStatusPartiallyFilled OrderStatus = "PARTIALLY_FILLED"
 )
 
 type OrderParameters struct {
@@ -127,15 +128,30 @@ type OrderParameters struct {
 	NewClientOrderId string
 }
 
+// TODO: Implement RESULT and FULL response types. Currently only ACK implemented.
+type PostOrderResponse struct {
+	Symbol                string `json:"symbol"`
+	OrderId               int64  `json:"orderId"`
+	ClientOrderId         string `json:"clientOrderId"`
+	TransactionTimeMillis int64  `json:"transactTime"`
+}
+
 func (c *RestClient) PostOrder(order OrderParameters) (*http.Response, error) {
 	params := map[string]interface{}{}
 	params["symbol"] = order.Symbol
 	params["side"] = order.Side
 	params["type"] = order.Type
 	params["quantity"] = order.Quantity
-	params["price"] = fmt.Sprintf("%.8f", order.Price)
+
+	switch order.Type {
+	case OrderTypeMarket:
+	default:
+		params["price"] = fmt.Sprintf("%.8f", order.Price)
+	}
 	params["newClientOrderId"] = order.NewClientOrderId
-	params["timeInForce"] = order.TimeInForce
+	if order.TimeInForce != "" {
+		params["timeInForce"] = order.TimeInForce
+	}
 
 	response, err := c.Post("/api/v3/order", params)
 	if err != nil {
@@ -147,10 +163,52 @@ func (c *RestClient) PostOrder(order OrderParameters) (*http.Response, error) {
 	return response, nil
 }
 
-func (c *RestClient) CancelOrder(symbol string, orderId int64) (*http.Response, error) {
+func (c *RestClient) CancelOrder(symbol string, orderId int64) (*CancelOrderResponse, error) {
 	params := map[string]interface{}{}
 	params["symbol"] = symbol
 	params["orderId"] = orderId
 
-	return c.Delete("/api/v3/order", params)
+	httpResponse, err := c.Delete("/api/v3/order", params)
+	if err != nil {
+		return nil, err
+	}
+
+	if httpResponse.StatusCode != http.StatusOK {
+		return nil, NewRestApiErrorFromResponse(httpResponse)
+	}
+
+	body, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var cancelOrderResponse CancelOrderResponse
+	if err := json.Unmarshal(body, &cancelOrderResponse); err != nil {
+		return nil, err
+	}
+	return &cancelOrderResponse, nil
+}
+
+func GetExchangeInfo() (*ExchangeInfoResponse, error) {
+	client := NewClient(nil)
+	response, err := client.Get("/api/v1/exchangeInfo", nil)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != http.StatusOK {
+		return nil, NewRestApiErrorFromResponse(response)
+	}
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var exchangeInfoResponse ExchangeInfoResponse
+	if err := json.Unmarshal(body, &exchangeInfoResponse); err != nil {
+		return nil, err
+	}
+	exchangeInfoResponse.RawResponse = body
+
+	return &exchangeInfoResponse, nil
 }

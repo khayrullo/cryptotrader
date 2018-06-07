@@ -36,7 +36,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"log"
 )
 
 const API_ROOT = "https://api.binance.com"
@@ -94,8 +93,6 @@ func (c *RestClient) Get(endpoint string, params map[string]interface{}) (*http.
 	if c.auth != nil && c.auth.ApiKey != "" {
 		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
 	}
-
-	log.Println(request.URL)
 
 	return http.DefaultClient.Do(request)
 }
@@ -200,7 +197,7 @@ func (c *RestClient) Delete(endpoint string, params map[string]interface{}) (*ht
 	if err != nil {
 		return nil, err
 	}
-
+	
 	if c.auth != nil && c.auth.ApiKey != "" {
 		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
 	}

@@ -24,28 +24,43 @@
 
 package binance
 
-import (
-	"time"
-)
+import "fmt"
 
-type StreamAggTrade struct {
-	EventType       string  `json:"e"`
-	EventTimeMillis int64   `json:"E"`
-	Symbol          string  `json:"s"`
-	TradeID         int64   `json:"a"`
-	Price           float64 `json:"p,string"`
-	Quantity        float64 `json:"q,string"`
-	FirstTradeID    int64   `json:"f"`
-	LastTradeID     int64   `json:"l"`
-	TradeTimeMillis int64   `json:"T"`
-	BuyerMaker      bool    `json:"m"`
-	Ignored         bool    `json:"M"`
+type symbolInfo struct {
+	tickSize float64
 }
 
-func (t *StreamAggTrade) QuoteQuantity() float64 {
-	return t.Quantity * t.Price
+type ExchangeInfoService struct {
+	Symbols map[string]symbolInfo
 }
 
-func (t *StreamAggTrade) Timestamp() time.Time {
-	return time.Unix(0, t.TradeTimeMillis*int64(time.Millisecond))
+func NewExchangeInfoService() *ExchangeInfoService {
+	return &ExchangeInfoService{
+		Symbols: make(map[string]symbolInfo),
+	}
+}
+
+func (s *ExchangeInfoService) Update() error {
+	exchangeInfo, err := GetExchangeInfo()
+	if err != nil {
+		return err
+	}
+	for _, symbol := range exchangeInfo.Symbols {
+		symbolInfo := symbolInfo{}
+		for _, filter := range symbol.Filters {
+			if filter.FilterType == "PRICE_FILTER" {
+				symbolInfo.tickSize = filter.TickSize
+			}
+		}
+		s.Symbols[symbol.Symbol] = symbolInfo
+	}
+	return nil
+}
+
+func (s *ExchangeInfoService) GetTickSize(symbol string) (float64, error) {
+	symbolInfo, ok := s.Symbols[symbol]
+	if !ok {
+		return 0, fmt.Errorf("symbol not found")
+	}
+	return symbolInfo.tickSize, nil
 }

@@ -52,30 +52,15 @@ func NewStreamClient() *StreamClient {
 }
 
 func (c *StreamClient) Connect(streams ... string) (err error) {
-	url := fmt.Sprintf("%s/stream?streams=%s", WS_STREAM_URL,
-		strings.Join(streams, "/"))
-	var httpResponse *http.Response
-	c.Conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
-	if err != nil {
-		return err
-	}
-	if httpResponse.StatusCode != http.StatusSwitchingProtocols {
-		return fmt.Errorf("%s", httpResponse.Status)
-	}
-	return nil
+	path := fmt.Sprintf("stream?streams=%s", strings.Join(streams, "/"))
+	c.Conn, err = openStream(path)
+	return err
 }
 
 func (c *StreamClient) ConnectSingle(stream string) (err error) {
-	url := fmt.Sprintf("%s/ws/%s", WS_STREAM_URL, stream)
-	var httpResponse *http.Response
-	c.Conn, httpResponse, err = websocket.DefaultDialer.Dial(url, nil)
-	if err != nil {
-		return err
-	}
-	if httpResponse.StatusCode != http.StatusSwitchingProtocols {
-		return fmt.Errorf("%s", httpResponse.Status)
-	}
-	return nil
+	path := fmt.Sprintf("ws/%s", stream)
+	c.Conn, err = openStream(path)
+	return err
 }
 
 func (c *StreamClient) Close() {
@@ -91,4 +76,16 @@ func (c *StreamClient) NextJSON() (interface{}, error) {
 	var message interface{}
 	err := c.Conn.ReadJSON(&message)
 	return message, err
+}
+
+func openStream(path string) (*websocket.Conn, error) {
+	url := fmt.Sprintf("%s/%s", WS_STREAM_URL, path)
+	ws, httpResponse, err := websocket.DefaultDialer.Dial(url, nil)
+	if err != nil {
+		return nil, err
+	}
+	if httpResponse.StatusCode != http.StatusSwitchingProtocols {
+		return nil, fmt.Errorf("%s", httpResponse.Status)
+	}
+	return ws, nil
 }
