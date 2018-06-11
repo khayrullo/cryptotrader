@@ -66,3 +66,21 @@ type CancelOrderResponse struct {
 	OrderID           int64  `json:"orderId"`
 	ClientOrderID     string `json:"clientOrderId"`
 }
+
+type AccountInfoBalance struct {
+	Asset  string  `json:"asset"`
+	Free   float64 `json:"free,string"`
+	Locked float64 `json:"locked,string"`
+}
+
+type AccountInfoResponse struct {
+	MakerCommission  int64                `json:"makerCommission"`
+	TakerCommission  int64                `json:"takerCommission"`
+	BuyerCommission  int64                `json:"buyerCommission"`
+	SellCommission   int64                `json:"sellCommission"`
+	CanTrade         bool                 `json:"canTrade"`
+	CanWithdraw      bool                 `json:"canWithdraw"`
+	CanDeposit       bool                 `json:"canDeposit"`
+	UpdateTimeMillis int64                `json:"updateTime"`
+	Balances         []AccountInfoBalance `json:"balances"`
+}

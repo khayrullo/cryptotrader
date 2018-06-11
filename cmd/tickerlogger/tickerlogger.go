@@ -67,7 +67,7 @@ func TickerLoggerCommand(args []string) {
 			}
 		case "BINANCE":
 			if Binance.Client == nil {
-				Binance.Client = binance.NewClient(nil)
+				Binance.Client = binance.NewAnonymousClient()
 			}
 			for _, symbol := range strings.Split(symbols, ",") {
 				Binance.Symbols = append(Binance.Symbols, strings.ToUpper(symbol))

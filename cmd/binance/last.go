@@ -33,7 +33,7 @@ import (
 )
 
 func LastCommand(args []string) {
-	client := binance.NewClient(nil)
+	client := binance.NewAnonymousClient()
 	response, err := client.Last()
 	if err != nil {
 		log.Fatal("error: ", err)

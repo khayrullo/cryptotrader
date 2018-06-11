@@ -40,20 +40,27 @@ import (
 
 const API_ROOT = "https://api.binance.com"
 
-type RestClientAuth struct {
+type restClientAuth struct {
 	ApiKey    string
 	ApiSecret string
 }
 
 type RestClient struct {
-	auth *RestClientAuth
+	auth *restClientAuth
 }
 
-func NewClient(config *RestClientAuth) *RestClient {
-	client := RestClient{
-		auth: config,
+func NewAnonymousClient() *RestClient {
+	return &RestClient{
 	}
-	return &client
+}
+
+func NewAuthenticatedClient(key string, secret string) *RestClient {
+	return &RestClient{
+		auth: &restClientAuth{
+			ApiKey:    key,
+			ApiSecret: secret,
+		},
+	}
 }
 
 func (c *RestClient) Get(endpoint string, params map[string]interface{}) (*http.Response, error) {
@@ -197,7 +204,7 @@ func (c *RestClient) Delete(endpoint string, params map[string]interface{}) (*ht
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if c.auth != nil && c.auth.ApiKey != "" {
 		request.Header.Add("X-MBX-APIKEY", c.auth.ApiKey)
 	}

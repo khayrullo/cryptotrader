@@ -24,24 +24,24 @@
 
 package binance
 
-type AccountInfoBalance struct {
+type StreamAccountInfoBalance struct {
 	Asset  string  `json:"a"`
 	Free   float64 `json:"f,string"`
 	Locked float64 `json:"l,string"`
 }
 
 type OutboundAccountInfo struct {
-	EventType             string               `json:"e"`
-	EventTimeMillis       int64                `json:"E"`
-	MakerCommissionRate   int64                `json:"m"`
-	TakerCommissionRate   int64                `json:"t"`
-	BuyerCommissionRate   int64                `json:"b"`
-	SellerCommissionRate  int64                `json:"s"`
-	CanTrade              bool                 `json:"T"`
-	CanWithdraw           bool                 `json:"W"`
-	CanDeposit            bool                 `json:"D"`
-	LastAccountUpdateTime int64                `json:"u"`
-	Balances              []AccountInfoBalance `json:"B"`
+	EventType             string                     `json:"e"`
+	EventTimeMillis       int64                      `json:"E"`
+	MakerCommissionRate   int64                      `json:"m"`
+	TakerCommissionRate   int64                      `json:"t"`
+	BuyerCommissionRate   int64                      `json:"b"`
+	SellerCommissionRate  int64                      `json:"s"`
+	CanTrade              bool                       `json:"T"`
+	CanWithdraw           bool                       `json:"W"`
+	CanDeposit            bool                       `json:"D"`
+	LastAccountUpdateTime int64                      `json:"u"`
+	Balances              []StreamAccountInfoBalance `json:"B"`
 }
 
 type StreamOrderUpdate struct {

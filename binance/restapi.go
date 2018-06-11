@@ -190,7 +190,7 @@ func (c *RestClient) CancelOrder(symbol string, orderId int64) (*CancelOrderResp
 }
 
 func GetExchangeInfo() (*ExchangeInfoResponse, error) {
-	client := NewClient(nil)
+	client := NewAnonymousClient()
 	response, err := client.Get("/api/v1/exchangeInfo", nil)
 	if err != nil {
 		return nil, err
@@ -211,4 +211,26 @@ func GetExchangeInfo() (*ExchangeInfoResponse, error) {
 	exchangeInfoResponse.RawResponse = body
 
 	return &exchangeInfoResponse, nil
+}
+
+func (c *RestClient) GetAccount() (*AccountInfoResponse, error) {
+	httpResponse, err := c.Get("/api/v3/account", nil)
+	if err != nil {
+		return nil, err
+	}
+	if httpResponse.StatusCode >= 400 {
+		return nil, NewRestApiErrorFromResponse(httpResponse)
+	}
+
+	body, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response AccountInfoResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
 }
