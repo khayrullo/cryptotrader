@@ -234,3 +234,24 @@ func (c *RestClient) GetAccount() (*AccountInfoResponse, error) {
 
 	return &response, nil
 }
+
+func (c *RestClient) GetOrderByOrderId(symbol string, orderId int64) (QueryOrderResponse, error) {
+	var response QueryOrderResponse
+	params := map[string]interface{}{
+		"symbol":  symbol,
+		"orderId": orderId,
+	}
+	httpResponse, err := c.Get("/api/v3/order", params)
+	if err != nil {
+		return response, err
+	}
+	defer httpResponse.Body.Close()
+	if httpResponse.StatusCode != http.StatusOK {
+		return response, NewRestApiErrorFromResponse(httpResponse)
+	}
+	decoder := json.NewDecoder(httpResponse.Body)
+	if err := decoder.Decode(&response); err != nil {
+		return response, err
+	}
+	return response, nil
+}

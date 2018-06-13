@@ -84,3 +84,20 @@ type AccountInfoResponse struct {
 	UpdateTimeMillis int64                `json:"updateTime"`
 	Balances         []AccountInfoBalance `json:"balances"`
 }
+
+type QueryOrderResponse struct {
+	Symbol        string      `json:"symbol"`
+	OrderId       int64       `json:"orderId"`
+	ClientOrderId string      `json:"clientOrderId"`
+	Price         float64     `json:"price,string"`
+	OrigQty       float64     `json:"origQty,string"`
+	ExecutedQty   float64     `json:"executeQty,string"`
+	Status        OrderStatus `json:"status"`
+	TimeInForce   TimeInForce `json:"timeInForce"`
+	Type          OrderType   `json:"type"`
+	Side          OrderSide   `json:"side"`
+	StopPrice     float64     `json:"stopPrice,string"`
+	IcebergQty    float64     `json:"icebergQty,string"`
+	TimeMillis    int64       `json:"time"`
+	IsWorking     bool        `json:"isWorking"`
+}
