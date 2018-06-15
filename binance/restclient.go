@@ -31,7 +31,6 @@ import (
 	"bytes"
 	"io/ioutil"
 	"encoding/json"
-	"strconv"
 	"time"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -255,36 +254,6 @@ type LastResponse struct {
 	Price  float64
 }
 
-// Return the latest prices for all symbols.
-func (c *RestClient) Last() ([]LastResponse, error) {
-	endpoint := "/api/v3/ticker/price"
-	httpResponse, err := c.Get(endpoint, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer httpResponse.Body.Close()
-	responseRaw := []LastResponseRaw{}
-	_, err = c.decodeBody(httpResponse, &responseRaw)
-	if err != nil {
-		return nil, err
-	}
-
-	response := []LastResponse{}
-	for _, last := range responseRaw {
-		price, err := strconv.ParseFloat(last.Price, 64)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse as float64: %s: %v",
-				last.Price, err)
-		}
-		response = append(response, LastResponse{
-			Symbol: last.Symbol,
-			Price:  price,
-		})
-	}
-
-	return response, nil
-}
-
 func (c *RestClient) decodeBody(r *http.Response, v interface{}) ([]byte, error) {
 	raw, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -299,7 +268,7 @@ func (c *RestClient) decodeBody(r *http.Response, v interface{}) ([]byte, error)
 }
 
 func (c *RestClient) GetAllSymbols() ([]string, error) {
-	lastTrades, err := c.Last()
+	lastTrades, err := c.GetAllPriceTicker()
 	if err != nil {
 		return nil, err
 	}

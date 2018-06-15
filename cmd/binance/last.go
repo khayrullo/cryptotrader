@@ -34,7 +34,7 @@ import (
 
 func LastCommand(args []string) {
 	client := binance.NewAnonymousClient()
-	response, err := client.Last()
+	response, err := client.GetAllPriceTicker()
 	if err != nil {
 		log.Fatal("error: ", err)
 	}

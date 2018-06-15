@@ -29,6 +29,7 @@ import (
 	"net/http"
 	"fmt"
 	"encoding/json"
+	"strconv"
 )
 
 type RestApiError struct {
@@ -253,5 +254,35 @@ func (c *RestClient) GetOrderByOrderId(symbol string, orderId int64) (QueryOrder
 	if err := decoder.Decode(&response); err != nil {
 		return response, err
 	}
+	return response, nil
+}
+
+// Return the latest prices for all symbols.
+func (c *RestClient) GetAllPriceTicker() ([]LastResponse, error) {
+	endpoint := "/api/v3/ticker/price"
+	httpResponse, err := c.Get(endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer httpResponse.Body.Close()
+	responseRaw := []LastResponseRaw{}
+	_, err = c.decodeBody(httpResponse, &responseRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	response := []LastResponse{}
+	for _, last := range responseRaw {
+		price, err := strconv.ParseFloat(last.Price, 64)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse as float64: %s: %v",
+				last.Price, err)
+		}
+		response = append(response, LastResponse{
+			Symbol: last.Symbol,
+			Price:  price,
+		})
+	}
+
 	return response, nil
 }

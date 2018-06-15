@@ -123,7 +123,7 @@ func TickerLoggerCommand(args []string) {
 		for {
 			sleep()
 			now := time.Now()
-			tickers, err := Binance.Client.Last()
+			tickers, err := Binance.Client.GetAllPriceTicker()
 			if err != nil {
 				log.Println("binance error: ", err)
 			} else {
