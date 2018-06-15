@@ -244,16 +244,6 @@ func (c *RestClient) BuildQueryString(params map[string]interface{}) string {
 	return queryString
 }
 
-type LastResponseRaw struct {
-	Symbol string `json:"symbol"`
-	Price  string `json:"price"`
-}
-
-type LastResponse struct {
-	Symbol string
-	Price  float64
-}
-
 func (c *RestClient) decodeBody(r *http.Response, v interface{}) ([]byte, error) {
 	raw, err := ioutil.ReadAll(r.Body)
 	if err != nil {

@@ -29,7 +29,6 @@ import (
 	"net/http"
 	"fmt"
 	"encoding/json"
-	"strconv"
 )
 
 type RestApiError struct {
@@ -258,31 +257,42 @@ func (c *RestClient) GetOrderByOrderId(symbol string, orderId int64) (QueryOrder
 }
 
 // Return the latest prices for all symbols.
-func (c *RestClient) GetAllPriceTicker() ([]LastResponse, error) {
+func (c *RestClient) GetAllPriceTicker() ([]PriceTickerResponse, error) {
 	endpoint := "/api/v3/ticker/price"
-	httpResponse, err := c.Get(endpoint, nil)
+	var response []PriceTickerResponse
+	err := c.genericGetAndDecode(endpoint, nil, &response)
+	return response, err
+}
+
+func (c *RestClient) GetPriceTicker(symbol string) (PriceTickerResponse, error) {
+	endpoint := "/api/v3/ticker/price"
+	var response PriceTickerResponse
+	params := map[string]interface{}{
+		"symbol": symbol,
+	}
+	err := c.genericGetAndDecode(endpoint, params, &response)
+	return response, err
+}
+
+func (c *RestClient) GetOrderBookTicker(symbol string) (OrderBookTickerResponse, error) {
+	endpoint := "/api/v3/ticker/bookTicker"
+	params := map[string]interface{}{
+		"symbol": symbol,
+	}
+	var response OrderBookTickerResponse
+	err := c.genericGetAndDecode(endpoint, params, &response)
+	return response, err
+}
+
+func (c *RestClient) genericGetAndDecode(endpoint string, params map[string]interface{}, response interface{}) error {
+	httpResponse, err := c.Get(endpoint, params)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer httpResponse.Body.Close()
-	responseRaw := []LastResponseRaw{}
-	_, err = c.decodeBody(httpResponse, &responseRaw)
-	if err != nil {
-		return nil, err
+	if httpResponse.StatusCode != 200 {
+		return NewRestApiErrorFromResponse(httpResponse)
 	}
-
-	response := []LastResponse{}
-	for _, last := range responseRaw {
-		price, err := strconv.ParseFloat(last.Price, 64)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse as float64: %s: %v",
-				last.Price, err)
-		}
-		response = append(response, LastResponse{
-			Symbol: last.Symbol,
-			Price:  price,
-		})
-	}
-
-	return response, nil
+	decoder := json.NewDecoder(httpResponse.Body)
+	return decoder.Decode(response)
 }

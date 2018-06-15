@@ -101,3 +101,16 @@ type QueryOrderResponse struct {
 	TimeMillis    int64       `json:"time"`
 	IsWorking     bool        `json:"isWorking"`
 }
+
+type PriceTickerResponse struct {
+	Symbol string  `json:"symbol"`
+	Price  float64 `json:"price,string"`
+}
+
+type OrderBookTickerResponse struct {
+	Symbol   string  `json:"symbol"`
+	BidPrice float64 `json:"bidPrice,string"`
+	BidQty   float64 `json:"bidQty,string"`
+	AskPrice float64 `json:"askPrice,string"`
+	AskQty   float64 `json:"askQty,string"`
+}
