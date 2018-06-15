@@ -114,3 +114,17 @@ type OrderBookTickerResponse struct {
 	AskPrice float64 `json:"askPrice,string"`
 	AskQty   float64 `json:"askQty,string"`
 }
+
+// GET /api/v3/myTrades
+type TradeResponse struct {
+	ID              int64   `json:"id"`
+	OrderID         int64   `json:"orderId"`
+	Price           float64 `json:"price,string"`
+	Quantity        float64 `json:"qty,string"`
+	Commission      float64 `json:"commission,string"`
+	CommissionAsset string  `json:"commissionAsset"`
+	TimeMillis      int64   `json:"time"`
+	IsBuyer         bool    `json:"isBuyer"`
+	IsMaker         bool    `json:"isMaker"`
+	IsBestMatch     bool    `json:"isBestMatch"`
+}

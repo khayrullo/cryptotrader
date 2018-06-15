@@ -62,7 +62,33 @@ func NewAuthenticatedClient(key string, secret string) *RestClient {
 	}
 }
 
+// Perform an unauthenticated GET request.
 func (c *RestClient) Get(endpoint string, params map[string]interface{}) (*http.Response, error) {
+
+	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
+	queryString := ""
+
+	if params == nil {
+		params = map[string]interface{}{}
+	}
+
+	if params != nil {
+		queryString = c.BuildQueryString(params)
+		if queryString != "" {
+			url = fmt.Sprintf("%s?%s", url, queryString)
+		}
+	}
+
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return http.DefaultClient.Do(request)
+}
+
+// Perform a fully authenticated GET request.
+func (c *RestClient) GetWithAuth(endpoint string, params map[string]interface{}) (*http.Response, error) {
 
 	url := fmt.Sprintf("%s%s", API_ROOT, endpoint)
 	queryString := ""

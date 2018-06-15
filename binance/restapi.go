@@ -29,6 +29,7 @@ import (
 	"net/http"
 	"fmt"
 	"encoding/json"
+	"bytes"
 )
 
 type RestApiError struct {
@@ -191,7 +192,7 @@ func (c *RestClient) CancelOrder(symbol string, orderId int64) (*CancelOrderResp
 
 func GetExchangeInfo() (*ExchangeInfoResponse, error) {
 	client := NewAnonymousClient()
-	response, err := client.Get("/api/v1/exchangeInfo", nil)
+	response, err := client.GetWithAuth("/api/v1/exchangeInfo", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +215,7 @@ func GetExchangeInfo() (*ExchangeInfoResponse, error) {
 }
 
 func (c *RestClient) GetAccount() (*AccountInfoResponse, error) {
-	httpResponse, err := c.Get("/api/v3/account", nil)
+	httpResponse, err := c.GetWithAuth("/api/v3/account", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +242,7 @@ func (c *RestClient) GetOrderByOrderId(symbol string, orderId int64) (QueryOrder
 		"symbol":  symbol,
 		"orderId": orderId,
 	}
-	httpResponse, err := c.Get("/api/v3/order", params)
+	httpResponse, err := c.GetWithAuth("/api/v3/order", params)
 	if err != nil {
 		return response, err
 	}
@@ -284,8 +285,41 @@ func (c *RestClient) GetOrderBookTicker(symbol string) (OrderBookTickerResponse,
 	return response, err
 }
 
+func (c *RestClient) GetMytrades(symbol string, limit int64, fromId int64) ([]TradeResponse, error) {
+	endpoint := "/api/v3/myTrades"
+	params := map[string]interface{}{
+		"symbol": symbol,
+	}
+	if limit > 0 {
+		params["limit"] = limit
+	}
+	if fromId > -1 {
+		params["fromId"] = fromId
+	}
+	var response []TradeResponse
+	err := c.genericGetWithAuthAndDecode(endpoint, params, &response)
+	return response, err
+}
+
+func (c *RestClient) genericGetWithAuthAndDecode(endpoint string, params map[string]interface{}, response interface{}) error {
+	httpResponse, err := c.GetWithAuth(endpoint, params)
+	if err != nil {
+		return err
+	}
+	defer httpResponse.Body.Close()
+	if httpResponse.StatusCode != 200 {
+		return NewRestApiErrorFromResponse(httpResponse)
+	}
+	body, err := ioutil.ReadAll(httpResponse.Body)
+	if err != nil {
+		return err
+	}
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	return decoder.Decode(response)
+}
+
 func (c *RestClient) genericGetAndDecode(endpoint string, params map[string]interface{}, response interface{}) error {
-	httpResponse, err := c.Get(endpoint, params)
+	httpResponse, err := c.GetWithAuth(endpoint, params)
 	if err != nil {
 		return err
 	}
