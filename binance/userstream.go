@@ -30,7 +30,7 @@ type StreamAccountInfoBalance struct {
 	Locked float64 `json:"l,string"`
 }
 
-type OutboundAccountInfo struct {
+type StreamOutboundAccountInfo struct {
 	EventType             string                     `json:"e"`
 	EventTimeMillis       int64                      `json:"E"`
 	MakerCommissionRate   int64                      `json:"m"`
@@ -44,7 +44,7 @@ type OutboundAccountInfo struct {
 	Balances              []StreamAccountInfoBalance `json:"B"`
 }
 
-type StreamOrderUpdate struct {
+type StreamExecutionReport struct {
 	EventType                string      `json:"e"`
 	EventTimeMillis          int64       `json:"E"`
 	Symbol                   string      `json:"s"`

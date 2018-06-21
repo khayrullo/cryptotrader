@@ -51,10 +51,10 @@ func BinanceUserStreamCommand() {
 			log.Fatal("error: failed to read next message: %v", err)
 		}
 
-		var rawOrderUpdate binance.StreamOrderUpdate
+		var rawOrderUpdate binance.StreamExecutionReport
 		err = json.Unmarshal(body, &rawOrderUpdate)
 		if err == nil {
-			x := binance.StreamOrderUpdate(rawOrderUpdate)
+			x := binance.StreamExecutionReport(rawOrderUpdate)
 			log.Printf("%+v\n", rawOrderUpdate)
 			log.Printf("%+v\n", x)
 		}
