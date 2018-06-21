@@ -26,17 +26,19 @@ package binance
 
 import "fmt"
 
-type symbolInfo struct {
-	tickSize float64
+type SymbolInfo struct {
+	TickSize float64
+	StepSize float64
+	MinNotional float64
 }
 
 type ExchangeInfoService struct {
-	Symbols map[string]symbolInfo
+	Symbols map[string]SymbolInfo
 }
 
 func NewExchangeInfoService() *ExchangeInfoService {
 	return &ExchangeInfoService{
-		Symbols: make(map[string]symbolInfo),
+		Symbols: make(map[string]SymbolInfo),
 	}
 }
 
@@ -46,10 +48,15 @@ func (s *ExchangeInfoService) Update() error {
 		return err
 	}
 	for _, symbol := range exchangeInfo.Symbols {
-		symbolInfo := symbolInfo{}
+		symbolInfo := SymbolInfo{}
 		for _, filter := range symbol.Filters {
-			if filter.FilterType == "PRICE_FILTER" {
-				symbolInfo.tickSize = filter.TickSize
+			switch filter.FilterType {
+			case "PRICE_FILTER":
+				symbolInfo.TickSize = filter.TickSize
+			case "MIN_NOTIONAL":
+				symbolInfo.MinNotional = filter.MinNotional
+			case "LOT_SIZE":
+				symbolInfo.StepSize = filter.StepSize
 			}
 		}
 		s.Symbols[symbol.Symbol] = symbolInfo
@@ -57,10 +64,38 @@ func (s *ExchangeInfoService) Update() error {
 	return nil
 }
 
+// GetSymbol returns the symbol info object for the requested symbol.
+func (s *ExchangeInfoService) GetSymbol(symbol string) (info SymbolInfo, err error) {
+	info, ok := s.Symbols[symbol]
+	if !ok {
+		return info, fmt.Errorf("symbol not found")
+	}
+	return info, nil
+}
+
+// GetTickSize returns the tick size for the requested symbol.
 func (s *ExchangeInfoService) GetTickSize(symbol string) (float64, error) {
 	symbolInfo, ok := s.Symbols[symbol]
 	if !ok {
 		return 0, fmt.Errorf("symbol not found")
 	}
-	return symbolInfo.tickSize, nil
+	return symbolInfo.TickSize, nil
+}
+
+// GetMinNotional returns the minimum notional value for the requested symbol.
+func (s *ExchangeInfoService) GetMinNotional(symbol string) (float64, error) {
+	symbolInfo, ok := s.Symbols[symbol]
+	if !ok {
+		return 0, fmt.Errorf("symbol not found")
+	}
+	return symbolInfo.MinNotional, nil
+}
+
+// GetStepSize returns the step size for the requested symbol.
+func (s *ExchangeInfoService) GetStepSize(symbol string) (float64, error) {
+	symbolInfo, ok := s.Symbols[symbol]
+	if !ok {
+		return 0, fmt.Errorf("symbol not found")
+	}
+	return symbolInfo.StepSize, nil
 }
