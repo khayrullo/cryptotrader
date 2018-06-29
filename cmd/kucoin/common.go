@@ -26,7 +26,7 @@ package kucoin
 
 import (
 	"github.com/spf13/viper"
-	"github.com/crankykernel/cryptotrader/kucoin"
+	"gitlab.com/crankykernel/cryptotrader/kucoin"
 )
 
 func getClient() *kucoin.Client {

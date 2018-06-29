@@ -25,7 +25,7 @@
 package ticker
 
 import (
-	"github.com/crankykernel/cryptotrader/gdax"
+	"gitlab.com/crankykernel/cryptotrader/gdax"
 	"log"
 	"time"
 	"encoding/json"

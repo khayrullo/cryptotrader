@@ -26,8 +26,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/crankykernel/cryptotrader/binance"
-	"github.com/crankykernel/cryptotrader/cmd/common"
+	"gitlab.com/crankykernel/cryptotrader/binance"
+	"gitlab.com/crankykernel/cryptotrader/cmd/common"
 	"github.com/spf13/viper"
 )
 

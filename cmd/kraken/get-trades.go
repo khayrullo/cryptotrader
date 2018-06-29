@@ -25,7 +25,7 @@
 package kraken
 
 import (
-	"github.com/crankykernel/cryptotrader/kraken"
+	"gitlab.com/crankykernel/cryptotrader/kraken"
 	"github.com/spf13/viper"
 	"log"
 	"encoding/json"
@@ -35,7 +35,7 @@ import (
 	"fmt"
 	"strings"
 	"strconv"
-	"github.com/crankykernel/cryptotrader/util"
+	"gitlab.com/crankykernel/cryptotrader/util"
 )
 
 type Trade struct {

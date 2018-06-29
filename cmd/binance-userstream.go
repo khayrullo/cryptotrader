@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/crankykernel/cryptotrader/cmd/binance"
+	"gitlab.com/crankykernel/cryptotrader/cmd/binance"
 )
 
 var binanceUserStreamCmd = &cobra.Command{

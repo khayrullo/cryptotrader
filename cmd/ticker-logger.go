@@ -26,7 +26,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/crankykernel/cryptotrader/cmd/tickerlogger"
+	"gitlab.com/crankykernel/cryptotrader/cmd/tickerlogger"
 )
 
 var tickerLoggerCmd = &cobra.Command{

@@ -31,7 +31,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"strings"
-	"github.com/crankykernel/cryptotrader/util"
+	"gitlab.com/crankykernel/cryptotrader/util"
 )
 
 type UserInfo struct {

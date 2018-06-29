@@ -15,8 +15,8 @@
 package tickerlogger
 
 import (
-	"github.com/crankykernel/cryptotrader/binance"
-	"github.com/crankykernel/cryptotrader/kraken"
+	"gitlab.com/crankykernel/cryptotrader/binance"
+	"gitlab.com/crankykernel/cryptotrader/kraken"
 	"strings"
 	"log"
 	"time"
