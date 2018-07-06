@@ -257,6 +257,27 @@ func (c *RestClient) GetOrderByOrderId(symbol string, orderId int64) (QueryOrder
 	return response, nil
 }
 
+func (c *RestClient) GetOrderByClientId(symbol string, clientId string) (QueryOrderResponse, error) {
+	var response QueryOrderResponse
+	params := map[string]interface{}{
+		"symbol":  symbol,
+		"origClientOrderId": clientId,
+	}
+	httpResponse, err := c.GetWithAuth("/api/v3/order", params)
+	if err != nil {
+		return response, err
+	}
+	defer httpResponse.Body.Close()
+	if httpResponse.StatusCode != http.StatusOK {
+		return response, NewRestApiErrorFromResponse(httpResponse)
+	}
+	decoder := json.NewDecoder(httpResponse.Body)
+	if err := decoder.Decode(&response); err != nil {
+		return response, err
+	}
+	return response, nil
+}
+
 // Return the latest prices for all symbols.
 func (c *RestClient) GetAllPriceTicker() ([]PriceTickerResponse, error) {
 	endpoint := "/api/v3/ticker/price"
