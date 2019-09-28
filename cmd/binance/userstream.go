@@ -27,7 +27,7 @@ package binance
 import (
 	"github.com/spf13/viper"
 	"log"
-	"gitlab.com/crankykernel/cryptotrader/binance"
+	"cryptotrader/binance"
 	"encoding/json"
 )
 

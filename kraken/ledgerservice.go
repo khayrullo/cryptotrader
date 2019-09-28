@@ -26,7 +26,7 @@ package kraken
 
 import (
 	"time"
-	"gitlab.com/crankykernel/cryptotrader/util"
+	"cryptotrader/util"
 	"strconv"
 	"sort"
 	"fmt"

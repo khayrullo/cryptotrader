@@ -29,7 +29,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"fmt"
-	"gitlab.com/crankykernel/cryptotrader/kraken"
+	"cryptotrader/kraken"
 	"net/http"
 	"github.com/spf13/viper"
 )

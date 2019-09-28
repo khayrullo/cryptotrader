@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/cryptotrader/cmd/common"
-	"gitlab.com/crankykernel/cryptotrader/quadriga"
+	"cryptotrader/cmd/common"
+	"cryptotrader/quadriga"
 	"github.com/spf13/viper"
 )
 

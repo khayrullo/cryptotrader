@@ -16,9 +16,9 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/cryptotrader/binance"
+	"cryptotrader/binance"
 	"github.com/spf13/viper"
-	"gitlab.com/crankykernel/cryptotrader/cmd/common"
+	"cryptotrader/cmd/common"
 )
 
 var binancePostCmd = &cobra.Command{

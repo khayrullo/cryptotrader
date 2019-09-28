@@ -28,7 +28,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"gitlab.com/crankykernel/cryptotrader/gdax"
+	"cryptotrader/gdax"
 	"log"
 )
 

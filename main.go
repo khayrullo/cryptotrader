@@ -14,7 +14,7 @@
 
 package main
 
-import "gitlab.com/crankykernel/cryptotrader/cmd"
+import "cryptotrader/cmd"
 
 func main() {
 	cmd.Execute()
