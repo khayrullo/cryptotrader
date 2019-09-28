@@ -14,7 +14,7 @@
 
 package main
 
-import "cryptotrader/cmd"
+import "github.com/khayrullo/cryptotrader/cmd"
 
 func main() {
 	cmd.Execute()

@@ -25,13 +25,13 @@
 package kraken
 
 import (
-	"log"
-	"strings"
-	"io/ioutil"
 	"fmt"
-	"cryptotrader/kraken"
-	"net/http"
+	"github.com/khayrullo/cryptotrader/kraken"
 	"github.com/spf13/viper"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
 )
 
 func KrakenGetCmd(args []string) {
@@ -88,4 +88,3 @@ func get(method string, args []string) {
 	}
 	fmt.Println(string(body))
 }
-

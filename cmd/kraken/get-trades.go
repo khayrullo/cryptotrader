@@ -25,17 +25,17 @@
 package kraken
 
 import (
-	"cryptotrader/kraken"
+	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/kraken"
+	"github.com/khayrullo/cryptotrader/util"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"log"
-	"encoding/json"
-	"time"
 	"sort"
-	"github.com/spf13/pflag"
-	"fmt"
-	"strings"
 	"strconv"
-	"cryptotrader/util"
+	"strings"
+	"time"
 )
 
 type Trade struct {

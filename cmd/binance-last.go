@@ -25,7 +25,7 @@
 package cmd
 
 import (
-	"cryptotrader/cmd/binance"
+	"github.com/khayrullo/cryptotrader/cmd/binance"
 	"github.com/spf13/cobra"
 )
 

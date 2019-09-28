@@ -1,8 +1,8 @@
 package common
 
 import (
-	"cryptotrader/core"
 	"fmt"
+	"github.com/khayrullo/cryptotrader/core"
 	"io/ioutil"
 	"log"
 	"net/http"

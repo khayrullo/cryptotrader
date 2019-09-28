@@ -25,11 +25,11 @@
 package kraken
 
 import (
-	"log"
-	"cryptotrader/kraken"
-	"github.com/spf13/viper"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/kraken"
+	"github.com/spf13/viper"
+	"log"
 	"time"
 )
 

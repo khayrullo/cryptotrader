@@ -25,13 +25,13 @@
 package kucoin
 
 import (
-	"fmt"
-	"time"
-	"io/ioutil"
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/util"
+	"io/ioutil"
 	"strings"
-	"cryptotrader/util"
+	"time"
 )
 
 type UserInfo struct {
@@ -64,7 +64,7 @@ func (c *Client) GetUserInfo() (*UserInfo, error) {
 
 	decoder := json.NewDecoder(bytes.NewReader(rawBody))
 	decoder.UseNumber()
-	userInfo := UserInfo{Raw: string(rawBody),}
+	userInfo := UserInfo{Raw: string(rawBody)}
 	err = decoder.Decode(&userInfo)
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ type DealtOrdersResponse struct {
 	Code            string `json:"code"`
 	Message         string `json:"msg"`
 	TimestampMillis int64  `json:"timestamp"`
-	Data struct {
+	Data            struct {
 		Total  int64    `json:"total"`
 		Limit  int64    `json:"limit"`
 		Page   int64    `json:"page"`
@@ -125,7 +125,7 @@ type WalletRecordsResponse struct {
 	Code            string `json:"code"`
 	Message         string `json:"msg"`
 	TimestampMillis int64  `json:"timestamp"`
-	Data struct {
+	Data            struct {
 		CurrPageNo int64               `json:"currPageNo"`
 		FirstPage  bool                `json:"firstPage"`
 		LastPage   bool                `json:"lastPage"`

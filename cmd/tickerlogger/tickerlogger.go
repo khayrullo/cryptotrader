@@ -15,10 +15,10 @@
 package tickerlogger
 
 import (
-	"cryptotrader/binance"
-	"cryptotrader/kraken"
 	"encoding/json"
 	"fmt"
+	"github.com/khayrullo/cryptotrader/binance"
+	"github.com/khayrullo/cryptotrader/kraken"
 	"log"
 	"strings"
 	"sync"

@@ -25,11 +25,11 @@
 package binance
 
 import (
-	"cryptotrader/binance"
-	"log"
-	"fmt"
-	"strings"
 	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/binance"
+	"log"
+	"strings"
 )
 
 func LastCommand(args []string) {

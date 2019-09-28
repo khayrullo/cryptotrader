@@ -17,8 +17,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/khayrullo/cryptotrader/quadriga"
 	"github.com/spf13/cobra"
-	"cryptotrader/quadriga"
 	"log"
 )
 

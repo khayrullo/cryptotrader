@@ -25,14 +25,14 @@
 package kraken
 
 import (
-	"cryptotrader/kraken"
+	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/kraken"
 	"github.com/spf13/viper"
 	"log"
-	"fmt"
+	"math"
 	"sort"
 	"strings"
-	"math"
-	"encoding/json"
 )
 
 var KrakenLedgerFlags struct {

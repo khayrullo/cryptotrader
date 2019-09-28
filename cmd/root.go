@@ -75,7 +75,7 @@ func initConfig() {
 		}
 
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".cryptotrader")
+		viper.SetConfigName(".github.com/khayrullo/cryptotrader")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

@@ -25,14 +25,14 @@
 package cmd
 
 import (
+	"github.com/khayrullo/cryptotrader/cmd/kucoin"
 	"github.com/spf13/cobra"
-	"cryptotrader/cmd/kucoin"
 )
 
 var kucoinGetCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Send an API GET request",
-	Long:  `Send an API GET request.
+	Long: `Send an API GET request.
 
 Example: trader kucoin-get /v1/order/dealt symbol=DRGN
 `,

@@ -25,9 +25,9 @@
 package kucoin
 
 import (
-	"log"
-	"cryptotrader/util"
 	"fmt"
+	"github.com/khayrullo/cryptotrader/util"
+	"log"
 )
 
 func Transfers(args []string) {
@@ -57,7 +57,7 @@ func Transfers(args []string) {
 				log.Fatal("error: ", err)
 			}
 			if len(response.Data.Entries) == 0 {
-				break;
+				break
 			}
 
 			for _, entry := range response.Data.Entries {

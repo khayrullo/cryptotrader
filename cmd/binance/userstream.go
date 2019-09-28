@@ -25,8 +25,8 @@
 package binance
 
 import (
-	"cryptotrader/binance"
 	"encoding/json"
+	"github.com/khayrullo/cryptotrader/binance"
 	"github.com/spf13/viper"
 	"log"
 )

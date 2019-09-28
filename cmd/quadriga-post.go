@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/khayrullo/cryptotrader/cmd/common"
+	"github.com/khayrullo/cryptotrader/quadriga"
 	"github.com/spf13/cobra"
-	"cryptotrader/cmd/common"
-	"cryptotrader/quadriga"
 	"github.com/spf13/viper"
 )
 

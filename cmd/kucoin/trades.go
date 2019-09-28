@@ -25,10 +25,10 @@
 package kucoin
 
 import (
-	"log"
-	"fmt"
-	"cryptotrader/kucoin"
 	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/kucoin"
+	"log"
 	"strings"
 )
 

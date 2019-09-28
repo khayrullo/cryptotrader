@@ -25,12 +25,12 @@
 package cmd
 
 import (
+	"github.com/khayrullo/cryptotrader/cmd/kucoin"
 	"github.com/spf13/cobra"
-	"cryptotrader/cmd/kucoin"
 )
 
 var kucoinTradesCmd = &cobra.Command{
-	Use: "trades",
+	Use:   "trades",
 	Short: "Get trades",
 	Long: `Print trades in descending order.
 

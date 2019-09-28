@@ -25,8 +25,8 @@
 package cmd
 
 import (
+	"github.com/khayrullo/cryptotrader/cmd/kraken"
 	"github.com/spf13/cobra"
-	"cryptotrader/cmd/kraken"
 )
 
 var krakenGetCmd = &cobra.Command{

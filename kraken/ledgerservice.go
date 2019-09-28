@@ -25,12 +25,12 @@
 package kraken
 
 import (
-	"time"
-	"cryptotrader/util"
-	"strconv"
-	"sort"
 	"fmt"
+	"github.com/khayrullo/cryptotrader/util"
 	"log"
+	"sort"
+	"strconv"
+	"time"
 )
 
 type LedgerEntry struct {
@@ -71,7 +71,7 @@ type RawLedgerEntry struct {
 }
 
 type RawLedgerResponse struct {
-	Error []string `json:"error"`
+	Error  []string `json:"error"`
 	Result struct {
 		Count  int64                     `json:"count"`
 		Ledger map[string]RawLedgerEntry `json:"ledger""`
@@ -178,7 +178,7 @@ func dedupe(entries []LedgerEntry) []LedgerEntry {
 	for _, entry := range entries {
 		if len(deduped) == 0 {
 			deduped = append(deduped, entry)
-		} else if (deduped[len(deduped)-1].LedgerID != entry.LedgerID) {
+		} else if deduped[len(deduped)-1].LedgerID != entry.LedgerID {
 			deduped = append(deduped, entry)
 		} else {
 			// Dupe.

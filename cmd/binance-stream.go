@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
-	"cryptotrader/binance"
-	"log"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"github.com/khayrullo/cryptotrader/binance"
+	"github.com/spf13/cobra"
+	"log"
 )
 
 var binanceStreamSingle bool

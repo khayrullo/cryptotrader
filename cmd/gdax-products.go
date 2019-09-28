@@ -27,13 +27,13 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/khayrullo/cryptotrader/gdax"
 	"github.com/spf13/cobra"
-	"cryptotrader/gdax"
 	"log"
 )
 
 var gdaxProductsCmd = &cobra.Command{
-	Use: "products",
+	Use:   "products",
 	Short: "List GDAX products (pairs)",
 	Run: func(cmd *cobra.Command, args []string) {
 		products, err := gdax.NewApiClient().Products()

@@ -25,8 +25,8 @@
 package cmd
 
 import (
+	"github.com/khayrullo/cryptotrader/cmd/kucoin"
 	"github.com/spf13/cobra"
-	"cryptotrader/cmd/kucoin"
 )
 
 var kucoinTransfersCmd = &cobra.Command{

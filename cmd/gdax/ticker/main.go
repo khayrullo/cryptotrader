@@ -25,11 +25,11 @@
 package ticker
 
 import (
-	"cryptotrader/gdax"
-	"log"
-	"time"
 	"encoding/json"
 	"fmt"
+	"github.com/khayrullo/cryptotrader/gdax"
+	"log"
+	"time"
 )
 
 func Main(args []string) {

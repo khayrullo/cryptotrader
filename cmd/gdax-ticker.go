@@ -25,12 +25,12 @@
 package cmd
 
 import (
+	"github.com/khayrullo/cryptotrader/cmd/gdax/ticker"
 	"github.com/spf13/cobra"
-	"cryptotrader/cmd/gdax/ticker"
 )
 
 var gdaxTickerCmd = &cobra.Command{
-	Use: "ticker",
+	Use:   "ticker",
 	Short: "Monitor the GDAX ticker",
 	Run: func(cmd *cobra.Command, args []string) {
 		ticker.Main(args)
