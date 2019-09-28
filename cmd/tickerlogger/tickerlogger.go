@@ -17,12 +17,12 @@ package tickerlogger
 import (
 	"cryptotrader/binance"
 	"cryptotrader/kraken"
-	"strings"
-	"log"
-	"time"
-	"fmt"
-	"sync"
 	"encoding/json"
+	"fmt"
+	"log"
+	"strings"
+	"sync"
+	"time"
 )
 
 var Flags struct {

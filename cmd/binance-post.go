@@ -15,10 +15,10 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"cryptotrader/binance"
-	"github.com/spf13/viper"
 	"cryptotrader/cmd/common"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var binancePostCmd = &cobra.Command{

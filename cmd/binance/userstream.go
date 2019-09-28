@@ -25,10 +25,10 @@
 package binance
 
 import (
-	"github.com/spf13/viper"
-	"log"
 	"cryptotrader/binance"
 	"encoding/json"
+	"github.com/spf13/viper"
+	"log"
 )
 
 func BinanceUserStreamCommand() {

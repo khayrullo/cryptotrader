@@ -1,12 +1,12 @@
 package common
 
 import (
-	"log"
-	"strings"
-	"net/http"
-	"io/ioutil"
-	"fmt"
 	"cryptotrader/core"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
 )
 
 func doPostOrGet(poster core.Poster, getter core.Getter, args []string) {
